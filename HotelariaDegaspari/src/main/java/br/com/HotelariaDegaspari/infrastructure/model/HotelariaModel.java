@@ -1,7 +1,6 @@
 package br.com.HotelariaDegaspari.infrastructure.model;
 
-import java.util.UUID;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,13 +19,14 @@ import lombok.Setter;
 @Builder // faz com que toda a classe seja 'buildada'
 @Entity
 
-@Table(name = "Hotelaria_Model")
+@Table(name = "tb_hotelaria")
 public class HotelariaModel {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private UUID id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
 	
+	@Column(name = "nome")
 	private String nome;
 	private String local;
 	private String capacidade;
