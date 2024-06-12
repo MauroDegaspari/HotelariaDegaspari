@@ -35,7 +35,7 @@ public class UsuarioController {
 	@ResponseBody
 	public ResponseEntity<List<HotelariaModel>> ListarTodos(){
 		
-		List<HotelariaModel> hotel = service.ListarTodosServices();
+		List<HotelariaModel> hotel = service.listarTodosServices();
 				
 		return new ResponseEntity<List<HotelariaModel>>(hotel, HttpStatus.OK);
 	}
@@ -51,7 +51,7 @@ public class UsuarioController {
 	@ResponseBody
 	public ResponseEntity<HotelariaModel> salvar(@RequestBody HotelariaModel hotelaria){
 		
-		HotelariaModel hotel = repository.save(hotelaria);
+		HotelariaModel hotel = service.salvarServices(hotelaria);
 		
 		return new ResponseEntity<HotelariaModel>(hotel, HttpStatus.CREATED);
 	}

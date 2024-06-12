@@ -14,12 +14,20 @@ public class HotelariaService {
 	@Autowired
 	private HotelariaRepository repository;
 	
-	public List<HotelariaModel> ListarTodosServices(){
+	public List<HotelariaModel> listarTodosServices(){
 		
 		List<HotelariaModel> hotel = repository.findAll();
 		
 	return hotel; 
 	}
 	
+
+	public HotelariaModel salvarServices(HotelariaModel hotel){
+		
+		HotelariaModel novoHotel = repository.save(hotel);
+		
+	return novoHotel; 
+	
+	}	
 
 }
