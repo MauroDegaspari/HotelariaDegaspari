@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.HotelariaDegaspari.domain.service.HotelariaService;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
 
@@ -27,11 +28,14 @@ public class UsuarioController {
 	@Autowired
 	private HotelariaRepository repository;
 	
+	@Autowired
+	private HotelariaService service;
+	
 	@GetMapping(value = "/listar")
 	@ResponseBody
 	public ResponseEntity<List<HotelariaModel>> ListarTodos(){
 		
-		List<HotelariaModel> hotel = repository.findAll();
+		List<HotelariaModel> hotel = service.ListarTodosServices();
 				
 		return new ResponseEntity<List<HotelariaModel>>(hotel, HttpStatus.OK);
 	}
@@ -43,7 +47,7 @@ public class UsuarioController {
 			   .orElse(ResponseEntity.notFound().build());
 	}
 	
-	@PostMapping("/salvar")
+	@PostMapping(value="/salvar")
 	@ResponseBody
 	public ResponseEntity<HotelariaModel> salvar(@RequestBody HotelariaModel hotelaria){
 		
