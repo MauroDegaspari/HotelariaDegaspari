@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,8 +26,6 @@ import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
 public class UsuarioController {
 	
 	//private final HotelariaRepository repository;
-	@Autowired
-	private HotelariaRepository repository;
 	
 	@Autowired
 	private HotelariaService service;
@@ -40,9 +39,9 @@ public class UsuarioController {
 		return new ResponseEntity<List<HotelariaModel>>(hotel, HttpStatus.OK);
 	}
 	
-	@GetMapping(value= "/{id}")
+	@GetMapping(value= "/unicoHotel/{id}")
 	public ResponseEntity<HotelariaModel> Achar(@PathVariable int id){
-		return repository.findById(id)
+		return service.acharIdService(id)
 			   .map(mapeando -> ResponseEntity.ok().body(mapeando))
 			   .orElse(ResponseEntity.notFound().build());
 	}
@@ -57,19 +56,19 @@ public class UsuarioController {
 	}
 	
 		
-	@PostMapping("/editar")
+	@PutMapping("/editar/{id}")
 	public HotelariaModel editar(@PathVariable int id, @RequestBody HotelariaModel hotel ){
-		HotelariaModel novoHotel = this.repository.findById(id).get();
+		HotelariaModel novoHotel = this.service.acharIdService(id).get();
 		BeanUtils.copyProperties(hotel, novoHotel,"id");
-		return repository.save(novoHotel);
+		return service.salvarServices(novoHotel);
 		
 	}
 	
-	@DeleteMapping(path = "/{id}")
+	@DeleteMapping(value="/deletar/{id}")
 	public ResponseEntity<?> deletar(@PathVariable int id){
-		return repository.findById(id)
+		return service.acharIdService(id)
 			.map(mapeandoHotel -> { 
-				repository.deleteById(id);				
+				service.deletarService(id);				
 			    return ResponseEntity.ok().body("Hotel deletado com SUCESSO");
 			}).orElse(ResponseEntity.notFound().build());
   
