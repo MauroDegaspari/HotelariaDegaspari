@@ -1,6 +1,5 @@
 package br.com.HotelariaDegaspari.domain.service;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +34,7 @@ public class HotelariaService {
 		
 	}catch (Exception e) {
 			System.out.println("erro :" + e);
-			JOptionPane.showConfirmDialog(null, "Erro: "+ e);
+			JOptionPane.showConfirmDialog(null, "Erro: " + e);
 		} 
 				
 	 HotelariaModel novoHotel = repository.save(hotel);
@@ -73,7 +72,7 @@ public class HotelariaService {
 
 		 
 		 if (hotel.getCnpj().length() != 14){
-			 throw new Exception("teste cnpj");
+			 throw new Exception("Erro: CNPJ deve conter 14 numeros");
 		 }
 		 
 		 if (hotel.getCapacidade() < 0){

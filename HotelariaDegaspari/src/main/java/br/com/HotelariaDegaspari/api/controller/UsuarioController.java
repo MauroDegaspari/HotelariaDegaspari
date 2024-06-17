@@ -1,7 +1,6 @@
 package br.com.HotelariaDegaspari.api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +53,8 @@ public class UsuarioController {
 		
 		HotelariaModel hotel = service.salvarServices(hotelaria);
 		
-		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar: Nome e(ou) CNPJ deve ser preenchidos" ):
-						       ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() +" Salvo com Sucesso.");	
+		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar:  o(╥﹏╥)o	(｡•́︿•̀｡)" ):
+						       ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() +" Salvo com Sucesso. (/^▽^)/... (ﾉﾟ0ﾟ)ﾉ~");	
 
 	}
 	
@@ -65,12 +64,12 @@ public class UsuarioController {
 	HotelariaModel hotelNovo = service.acharIdService(id).get();
 
 	if (hotelNovo == null)
-	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado");
+	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado (•ิ_•ิ) (•ิ_•ิ)");
 	
 	BeanUtils.copyProperties(hotel, hotelNovo,"id");
 	service.salvarServices(hotelNovo);
-	return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar: Nome e(ou) CNPJ deve ser preenchidos" ):
-	                       ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() +" Editado com Sucesso.");	
+	return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Editar: (•ิ_•ิ) o(╥﹏╥)o	(｡•́︿•̀｡)" ):
+	                       ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() +" Editado com Sucesso. (ﾉﾟ0ﾟ)ﾉ... (/^▽^)/");	
 
 
 	}
@@ -80,7 +79,7 @@ public class UsuarioController {
 		return service.acharIdService(id)
 			.map(mapeandoHotel -> { 
 				service.deletarService(id);				
-			    return ResponseEntity.ok().body("Hotel deletado com SUCESSO");
+			    return ResponseEntity.ok().body("Hotel deletado com SUCESSO  凸(｀△´＋）");
 			}).orElse(ResponseEntity.notFound().build());
   
 	}
