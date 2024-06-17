@@ -19,21 +19,27 @@ public class HotelariaService {
 	
 	
 	public List<HotelariaModel> listarTodosServices(){
-		
 		List<HotelariaModel> hotel = repository.findAll();
-		if(hotel.isEmpty())
-		
-		System.out.print("Não existe nenhum hotel");
 		
 	 return hotel; 
 	}
 	
 
 	public HotelariaModel salvarServices(HotelariaModel hotel){
+	 try {
 		
-		HotelariaModel novoHotel = repository.save(hotel);
+		 if(this.validarHotel(hotel) == false){
+			 return null;
+		 }
 		
-	return novoHotel; 
+	}catch (Exception e) {
+			System.out.println("erro :" + e);
+			JOptionPane.showConfirmDialog(null, "Erro: "+ e);
+		} 
+				
+	 HotelariaModel novoHotel = repository.save(hotel);
+	 return novoHotel; 
+	 
 	
 	}
 	public Optional<HotelariaModel> acharIdService(int hotel){
@@ -48,6 +54,24 @@ public class HotelariaService {
 		
 	repository.deleteById(id);
 		
+	}
+	
+	public boolean validarHotel(HotelariaModel hotel){
+	try {
+		if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
+			 return false;
+		 
+		 if (hotel.getCnpj().length() != 14  )
+			 return false;	
+		 
+		 if (hotel.getCapacidade() < 0)
+			 return false;
+		
+	}catch (Exception e) {
+		// TODO: handle exception
+	}
+		
+		return true;
 	}
 
 }
