@@ -34,7 +34,7 @@ public class HotelariaService {
 		
 	}catch (Exception e) {
 			System.out.println("erro :" + e);
-			JOptionPane.showConfirmDialog(null, "Erro: "+ e);
+			JOptionPane.showConfirmDialog(null, "Erro: " + e);
 		} 
 				
 	 HotelariaModel novoHotel = repository.save(hotel);
@@ -56,20 +56,32 @@ public class HotelariaService {
 		
 	}
 	
-	public boolean validarHotel(HotelariaModel hotel){
-	try {
-		if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
-			 return false;
-		 
-		 if (hotel.getCnpj().length() != 14  )
-			 return false;	
-		 
-		 if (hotel.getCapacidade() < 0)
-			 return false;
+	public boolean validarHotel(HotelariaModel hotel) throws Exception{
+	 
+		List<HotelariaModel> todosHoteis = repository.findAll();
 		
-	}catch (Exception e) {
-		// TODO: handle exception
-	}
+		
+		for (HotelariaModel hotelariaModel : todosHoteis) {
+			if(hotelariaModel.getCnpj().equals(hotel.getCnpj())){
+				throw new Exception("Hotel já existe!");
+			}
+		}
+
+		if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
+			throw new Exception("teste nome ou cnpj");
+
+		 
+		 if (hotel.getCnpj().length() != 14){
+			 throw new Exception("Erro: CNPJ deve conter 14 numeros");
+		 }
+		 
+		 if (hotel.getCapacidade() < 0){
+			 
+			  throw new Exception("teste capacidade");
+		 	 
+			 }
+			 
+		
 		
 		return true;
 	}
