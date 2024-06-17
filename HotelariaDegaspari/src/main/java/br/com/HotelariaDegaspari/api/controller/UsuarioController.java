@@ -3,6 +3,7 @@ package br.com.HotelariaDegaspari.api.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +30,15 @@ public class UsuarioController {
 	@Autowired
 	private HotelariaService service;
 	
-	@GetMapping(value = "/listar")
+	@GetMapping(value = "/listarTodos")
 	@ResponseBody
 	public ResponseEntity<List<HotelariaModel>> ListarTodos(){
 		
 		List<HotelariaModel> hotel = service.listarTodosServices();
+		return hotel.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(null) :
+			                     new ResponseEntity<List<HotelariaModel>>(hotel, HttpStatus.OK);
 				
-		return new ResponseEntity<List<HotelariaModel>>(hotel, HttpStatus.OK);
+		
 	}
 	
 	@GetMapping(value= "/unicoHotel/{id}")
@@ -47,24 +50,26 @@ public class UsuarioController {
 	
 	@PostMapping(value="/salvar")
 	@ResponseBody
-	public ResponseEntity<HotelariaModel> salvar(@RequestBody HotelariaModel hotelaria){
+	public ResponseEntity<Object> salvar(@RequestBody HotelariaModel hotelaria){
 		
 		HotelariaModel hotel = service.salvarServices(hotelaria);
 		
-		return new ResponseEntity<HotelariaModel>(hotel, HttpStatus.CREATED);
+		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar: Nome e(ou) CNPJ deve ser preenchidos" ):
+						       ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() +" Salvo com Sucesso.");	
+
 	}
 	
 		
-	@PutMapping(value = "/update/{id}")
-	public ResponseEntity<Object> update(@PathVariable(value = "id") int id, @RequestBody HotelariaModel hotel) {
-	Optional<HotelariaModel> hotelOptional = service.acharIdService(id);
+	@PutMapping(value = "/editar/{id}")
+	public ResponseEntity<Object> editar(@PathVariable(value = "id") int id, @RequestBody HotelariaModel hotel) {
+	HotelariaModel hotelNovo = service.acharIdService(id).get();
 
-	if (!hotelOptional.isPresent()) {
+	if (hotelNovo == null)
 	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado");
-	}
-
-	service.salvarServices(hotel);
-	return ResponseEntity.status(HttpStatus.OK).body(hotel);
+	
+	BeanUtils.copyProperties(hotel, hotelNovo,"id");
+	service.salvarServices(hotelNovo);
+	return ResponseEntity.status(HttpStatus.OK).body(hotelNovo);
 
 	}
 	

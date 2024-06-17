@@ -21,7 +21,7 @@ public class HotelariaModel {
 	@Column(name = "nome")
 	private String nome;
 	private String local;
-	private String capacidade;
+	private int capacidade;
 	private String cnpj;
 	
 	public HotelariaModel() {
@@ -52,11 +52,11 @@ public class HotelariaModel {
 		this.local = local;
 	}
 
-	public String getCapacidade() {
+	public int getCapacidade() {
 		return capacidade;
 	}
 
-	public void setCapacidade(String capacidade) {
+	public void setCapacidade(int capacidade) {
 		this.capacidade = capacidade;
 	}
 
