@@ -1,8 +1,8 @@
 package br.com.HotelariaDegaspari.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.HotelariaDegaspari.domain.service.HotelariaService;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
-import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
 
 @RestController
 //@RequiredArgsConstructor
@@ -56,12 +55,17 @@ public class UsuarioController {
 	}
 	
 		
-	@PutMapping("/editar/{id}")
-	public HotelariaModel editar(@PathVariable int id, @RequestBody HotelariaModel hotel ){
-		HotelariaModel novoHotel = this.service.acharIdService(id).get();
-		BeanUtils.copyProperties(hotel, novoHotel,"id");
-		return service.salvarServices(novoHotel);
-		
+	@PutMapping(value = "/update/{id}")
+	public ResponseEntity<Object> update(@PathVariable(value = "id") int id, @RequestBody HotelariaModel hotel) {
+	Optional<HotelariaModel> hotelOptional = service.acharIdService(id);
+
+	if (!hotelOptional.isPresent()) {
+	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado");
+	}
+
+	service.salvarServices(hotel);
+	return ResponseEntity.status(HttpStatus.OK).body(hotel);
+
 	}
 	
 	@DeleteMapping(value="/deletar/{id}")
