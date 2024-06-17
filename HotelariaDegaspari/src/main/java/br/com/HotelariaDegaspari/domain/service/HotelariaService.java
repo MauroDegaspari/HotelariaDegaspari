@@ -1,5 +1,6 @@
 package br.com.HotelariaDegaspari.domain.service;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,20 +57,32 @@ public class HotelariaService {
 		
 	}
 	
-	public boolean validarHotel(HotelariaModel hotel){
-	try {
-		if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
-			 return false;
-		 
-		 if (hotel.getCnpj().length() != 14  )
-			 return false;	
-		 
-		 if (hotel.getCapacidade() < 0)
-			 return false;
+	public boolean validarHotel(HotelariaModel hotel) throws Exception{
+	 
+		List<HotelariaModel> todosHoteis = repository.findAll();
 		
-	}catch (Exception e) {
-		// TODO: handle exception
-	}
+		
+		for (HotelariaModel hotelariaModel : todosHoteis) {
+			if(hotelariaModel.getCnpj().equals(hotel.getCnpj())){
+				throw new Exception("Hotel já existe!");
+			}
+		}
+
+		if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
+			throw new Exception("teste nome ou cnpj");
+
+		 
+		 if (hotel.getCnpj().length() != 14){
+			 throw new Exception("teste cnpj");
+		 }
+		 
+		 if (hotel.getCapacidade() < 0){
+			 
+			  throw new Exception("teste capacidade");
+		 	 
+			 }
+			 
+		
 		
 		return true;
 	}

@@ -69,7 +69,9 @@ public class UsuarioController {
 	
 	BeanUtils.copyProperties(hotel, hotelNovo,"id");
 	service.salvarServices(hotelNovo);
-	return ResponseEntity.status(HttpStatus.OK).body(hotelNovo);
+	return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar: Nome e(ou) CNPJ deve ser preenchidos" ):
+	                       ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() +" Editado com Sucesso.");	
+
 
 	}
 	
