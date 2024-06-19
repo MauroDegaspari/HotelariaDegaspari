@@ -10,18 +10,20 @@ import javax.persistence.Table;
 
 //@Builder // faz com que toda a classe seja 'buildada'
 @Entity
-
-@Table(name = "tb_hotelaria")
+@Table(name = "TB_HOTELARIA")
 public class HotelariaModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	private int id;
 	
 	@Column(name = "nome")
 	private String nome;
 	private String local;
 	private int capacidade;
+	
+	@Column(name = "CNPJ")
 	private String cnpj;
 	
 	public HotelariaModel() {
