@@ -61,11 +61,11 @@ public class UsuarioController {
 		
 	@PutMapping(value = "/editar/{id}")
 	public ResponseEntity<Object> editar(@PathVariable(value = "id") int id, @RequestBody HotelariaModel hotel) {
-	HotelariaModel hotelNovo = service.acharIdService(id).get();
 
-	if (hotelNovo == null)
+	if (hotel.equals(null))
 	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado (•ิ_•ิ) (•ิ_•ิ)");
 	
+	HotelariaModel hotelNovo = service.acharIdService(id).get();
 	BeanUtils.copyProperties(hotel, hotelNovo,"id");
 	service.salvarServices(hotelNovo);
 	return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Editar: (•ิ_•ิ) o(╥﹏╥)o	(｡•́︿•̀｡)" ):
@@ -82,6 +82,21 @@ public class UsuarioController {
 			    return ResponseEntity.ok().body("Hotel deletado com SUCESSO  凸(｀△´＋）");
 			}).orElse(ResponseEntity.notFound().build());
   
+	}
+	
+	/**
+	 * 
+	 * @apiNote Exercicio 5
+	 * @since 18/06/2024 21:07:21
+	 * @author Mauro Degaspari
+	 * @return Trazendo hotel por CNPJ cadastrado
+	 */
+	@GetMapping(value="/buscarCnpj/{cnpj}")
+	public ResponseEntity<HotelariaModel> acharPeloCnpj(@PathVariable String cnpj){
+		return service.acharHotelCnpj(cnpj)
+				.map(mapeandoCnpj -> ResponseEntity.ok().body(mapeandoCnpj))
+				.orElse(ResponseEntity.notFound().build());						
+		
 	}
 }	
 	

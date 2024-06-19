@@ -50,6 +50,14 @@ public class HotelariaService {
 		
 	}
 	
+	public Optional<HotelariaModel> acharHotelCnpj(String cnpj){
+		
+		Optional<HotelariaModel> Cnpjhotel = repository.acharCnpj(cnpj);
+				
+		return Cnpjhotel;
+		
+	}
+	
 	public void deletarService(int id){
 		
 	repository.deleteById(id);
