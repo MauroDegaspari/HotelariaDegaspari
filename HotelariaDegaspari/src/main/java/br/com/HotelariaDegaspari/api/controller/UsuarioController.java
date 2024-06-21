@@ -93,4 +93,19 @@ public class UsuarioController {
 				.orElse(ResponseEntity.notFound().build());
 
 	}
+	
+	/**
+	 * 
+	 * @apiNote Exercicio 6
+	 * @since 21/06/2024 21:07:21
+	 * @author Mauro Degaspari
+	 * @return Crie outro metodo personalizado. Podendo ser uma nova 'buscaPorAlgumaCoisa', podendo ser um
+     *         novo 'deletarPorAlgumaCoisa', 'updatePorAlgumaCoisa'. Faça de acordo como foi feito em aula.
+	 */
+	@GetMapping(value = "/buscarLocalidade/{local}")
+	public ResponseEntity<HotelariaModel> acharPorLocalidade(@PathVariable(value = "local") String local) {
+		return service.acharHotelLocal(local).map(mapeandoCnpj -> ResponseEntity.ok().body(mapeandoCnpj))
+				.orElse(ResponseEntity.notFound().build());
+
+	}
 }

@@ -79,10 +79,10 @@ public class HotelariaService {
 
 	public Optional<HotelariaModel> acharHotelCnpj(String cnpj) {
 
-		Optional<HotelariaModel> Cnpjhotel = repository.acharCnpj(cnpj);
+		Optional<HotelariaModel> cnpjHotel = repository.acharCnpj(cnpj);
 
 		try {
-			if (!Cnpjhotel.isPresent())
+			if (!cnpjHotel.isPresent())
 				throw new ExceptionHotel("Hotel Não encontrado por CNPJ");
 
 		} catch (Exception e) {
@@ -91,9 +91,28 @@ public class HotelariaService {
 			System.out.println("Erro: " + e.getMessage());
 		}
 
-		return Cnpjhotel;
+		return cnpjHotel;
 
 	}
+	
+	public Optional<HotelariaModel> acharHotelLocal(String local) {
+
+		Optional<HotelariaModel> LocalidadeHotel = repository.AcharPorLocalidade(local);
+
+		try {
+			if (!LocalidadeHotel.isPresent())
+				throw new ExceptionHotel("Hotel Não encontrado por CNPJ");
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			System.out.println("Erro: " + e.getMessage());
+		}
+
+		return LocalidadeHotel;
+
+	}
+	
 
 	public Optional<HotelariaModel> deletarService(int id) {
 
