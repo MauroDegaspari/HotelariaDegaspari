@@ -23,67 +23,63 @@ import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 //@RequiredArgsConstructor
 @RequestMapping("/app")
 public class UsuarioController {
-	
-	//private final HotelariaRepository repository;
-	
+
+	// private final HotelariaRepository repository;
+
 	@Autowired
 	private HotelariaService service;
-	
+
 	@GetMapping(value = "/listarTodos")
 	@ResponseBody
-	public ResponseEntity<List<HotelariaModel>> ListarTodos(){
-		
+	public ResponseEntity<List<HotelariaModel>> ListarTodos() {
+
 		List<HotelariaModel> hotel = service.listarTodosServices();
-		return hotel.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(null) :
-			                     new ResponseEntity<List<HotelariaModel>>(hotel, HttpStatus.OK);
-				
-		
-	}
-	
-	@GetMapping(value= "/unicoHotel/{id}")
-	public ResponseEntity<HotelariaModel> Achar(@PathVariable int id){
-		return service.acharIdService(id)
-			   .map(mapeando -> ResponseEntity.ok().body(mapeando))
-			   .orElse(ResponseEntity.notFound().build());
-	}
-	
-	@PostMapping(value="/salvar")
-	@ResponseBody
-	public ResponseEntity<Object> salvar(@RequestBody HotelariaModel hotelaria){
-		
-		HotelariaModel hotel = service.salvarServices(hotelaria);
-		
-		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar:  o(╥﹏╥)o	(｡•́︿•̀｡)" ):
-						       ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() +" Salvo com Sucesso. (/^▽^)/... (ﾉﾟ0ﾟ)ﾉ~");	
+		return hotel.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(null) 
+						       : new ResponseEntity<List<HotelariaModel>>(hotel, HttpStatus.OK);
 
 	}
-	
-		
+
+	@GetMapping(value = "/unicoHotel/{id}")
+	public ResponseEntity<HotelariaModel> Achar(@PathVariable int id) {
+		return service.acharIdService(id).map(mapeando -> ResponseEntity.ok().body(mapeando))
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@PostMapping(value = "/salvar")
+	@ResponseBody
+	public ResponseEntity<Object> salvar(@RequestBody HotelariaModel hotelaria) {
+
+		HotelariaModel hotel = service.salvarServices(hotelaria);
+
+		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar:  o(╥﹏╥)o	(｡•́︿•̀｡)")
+							 : ResponseEntity.status(HttpStatus.OK)
+						.body("Hotel " + hotel.getNome() + " Salvo com Sucesso. (/^▽^)/... (ﾉﾟ0ﾟ)ﾉ~");
+
+	}
+
 	@PutMapping(value = "/editar/{id}")
 	public ResponseEntity<Object> editar(@PathVariable(value = "id") int id, @RequestBody HotelariaModel hotel) {
 
-	if (hotel.equals(null))
-	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado (•ิ_•ิ) (•ิ_•ิ)");
-	
-	HotelariaModel hotelNovo = service.acharIdService(id).get();
-	BeanUtils.copyProperties(hotel, hotelNovo,"id");
-	service.salvarServices(hotelNovo);
-	return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Editar: (•ิ_•ิ) o(╥﹏╥)o	(｡•́︿•̀｡)" ):
-	                       ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() +" Editado com Sucesso. (ﾉﾟ0ﾟ)ﾉ... (/^▽^)/");	
-
+		if (hotel.equals(null))
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado (•ิ_•ิ) (•ิ_•ิ)");
+		
+		service.validarEdicaoHotel(id, hotel);
+		
+		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Editar: (•ิ_•ิ) o(╥﹏╥)o	(｡•́︿•̀｡)")
+							 : ResponseEntity.status(HttpStatus.OK)
+						.body("Hotel " + hotel.getNome() + " Editado com Sucesso. (ﾉﾟ0ﾟ)ﾉ... (/^▽^)/");
 
 	}
-	
-	@DeleteMapping(value="/deletar/{id}")
-	public ResponseEntity<?> deletar(@PathVariable int id){
-		return service.acharIdService(id)
-			.map(mapeandoHotel -> { 
-				service.deletarService(id);				
-			    return ResponseEntity.ok().body("Hotel deletado com SUCESSO  凸(｀△´＋）");
-			}).orElse(ResponseEntity.notFound().build());
-  
+
+	@DeleteMapping(value = "/deletar/{id}")
+	public ResponseEntity<?> deletar(@PathVariable int id) {
+		return service.acharIdService(id).map(mapeandoHotel -> {
+			service.deletarService(id);
+			return ResponseEntity.ok().body("Hotel" + mapeandoHotel.getNome()+ "deletado com SUCESSO ");
+		}).orElse(ResponseEntity.notFound().build());
+
 	}
-	
+
 	/**
 	 * 
 	 * @apiNote Exercicio 5
@@ -91,14 +87,10 @@ public class UsuarioController {
 	 * @author Mauro Degaspari
 	 * @return Trazendo hotel por CNPJ cadastrado
 	 */
-	@GetMapping(value="/buscarCnpj/{cnpj}")
-	public ResponseEntity<HotelariaModel> acharPeloCnpj(@PathVariable String cnpj){
-		return service.acharHotelCnpj(cnpj)
-				.map(mapeandoCnpj -> ResponseEntity.ok().body(mapeandoCnpj))
-				.orElse(ResponseEntity.notFound().build());						
-		
-	}
-}	
-	
-	
+	@GetMapping(value = "/buscarCnpj/{cnpj}")
+	public ResponseEntity<HotelariaModel> acharPeloCnpj(@PathVariable(value = "cnpj") String cnpj) {
+		return service.acharHotelCnpj(cnpj).map(mapeandoCnpj -> ResponseEntity.ok().body(mapeandoCnpj))
+				.orElse(ResponseEntity.notFound().build());
 
+	}
+}
