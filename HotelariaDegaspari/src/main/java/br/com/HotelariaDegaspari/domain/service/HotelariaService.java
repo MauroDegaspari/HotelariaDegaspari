@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JOptionPane;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class HotelariaService {
 	public HotelariaService(HotelariaRepository repository) {
 		this.repository = repository;
 	}
-
+	// @Transactional(readOnly = true)
 	public List<HotelariaModel> listarTodosServices() {
 		List<HotelariaModel> hotel = repository.findAll();
 
@@ -41,6 +42,7 @@ public class HotelariaService {
 		return hotel;
 	}
 
+	@Transactional
 	public HotelariaModel salvarServices(HotelariaModel hotel) {
 		try {
 
@@ -65,7 +67,7 @@ public class HotelariaService {
 		try {
 
 			if (!hotelId.isPresent())
-				throw new ExceptionHotel("Hotel Não encontrado por ID");
+				throw new ExceptionHotel("Hotel Não encontrado");
 
 		} catch (Exception e) {
 
@@ -101,7 +103,7 @@ public class HotelariaService {
 
 		try {
 			if (!LocalidadeHotel.isPresent())
-				throw new ExceptionHotel("Hotel Não encontrado por CNPJ");
+				throw new ExceptionHotel("Hotel Não encontrado por LOCALIZAÇÃO");
 
 		} catch (Exception e) {
 
@@ -117,12 +119,7 @@ public class HotelariaService {
 	public Optional<HotelariaModel> deletarService(int id) {
 
 		Optional<HotelariaModel> deletarHotel = repository.findById(id);
-		try {
-			if (!deletarHotel.isPresent())
-				throw new ExceptionHotel("Não existe o hotel para DELETAR");
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+			
 		repository.delete(deletarHotel.get());
 		return deletarHotel;
 	}
@@ -133,7 +130,7 @@ public class HotelariaService {
 
 		for (HotelariaModel hotelariaModel : todosHoteis) {
 			if (hotelariaModel.getCnpj().equals(hotel.getCnpj())) {
-				throw new Exception("Hotel já existe!");
+				throw new Exception("Hotel com CNPJ " + hotelariaModel.getCnpj() +" já existe!");
 			}
 		}
 
@@ -160,7 +157,8 @@ public class HotelariaService {
 		try {
 
 			BeanUtils.copyProperties(hotel, hotelNovo);
-			salvarServices(hotelNovo);
+			repository.save(hotelNovo);
+			//salvarServices(hotelNovo);
 
 		} catch (Exception e) {
 			e.printStackTrace();

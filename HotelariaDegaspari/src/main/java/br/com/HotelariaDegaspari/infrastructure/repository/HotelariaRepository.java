@@ -12,9 +12,9 @@ import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 @Repository
 public interface HotelariaRepository extends JpaRepository<HotelariaModel, Integer>{
 
-	@Query(value = "SELECT * FROM TB_HOTELARIA h WHERE h.CNPJ = cnpj", nativeQuery = true)
+	@Query(value = "SELECT * FROM TB_HOTELARIA h WHERE h.CNPJ = cnpj ", nativeQuery = true)
 	Optional<HotelariaModel> acharCnpj(@Param("cnpj")String cnpj);
 	
-	@Query(value = "SELECT * FROM TB_HOTELARIA WHERE Upper(LOCAL) LIKE  Upper('%local%') ", nativeQuery = true)
+	@Query(value = "SELECT * FROM TB_HOTELARIA h WHERE Upper(h.local) LIKE Upper('%local%') ", nativeQuery = true)
 	Optional<HotelariaModel> AcharPorLocalidade(@Param("local") String local);
 }
