@@ -12,6 +12,6 @@ import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 @Repository
 public interface HotelariaRepository extends JpaRepository<HotelariaModel, Integer>{
 
-	@Query(value="SELECT * FROM TB_HOTELARIA h WHERE h.CNPJ = cnpj", nativeQuery = true)
+	@Query(value = "SELECT * FROM TB_HOTELARIA h WHERE h.CNPJ = cnpj", nativeQuery = true)
 	Optional<HotelariaModel> acharCnpj(@Param("cnpj")String cnpj);
 }
