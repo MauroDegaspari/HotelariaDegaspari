@@ -75,7 +75,7 @@ public class UsuarioController {
 	public ResponseEntity<?> deletar(@PathVariable int id) {
 		return service.acharIdService(id).map(mapeandoHotel -> {
 			service.deletarService(id);
-			return ResponseEntity.ok().body("Hotel" + mapeandoHotel.getNome()+ "deletado com SUCESSO ");
+			return ResponseEntity.ok().body("Hotel " + mapeandoHotel.getNome()+ " deletado com SUCESSO ");
 		}).orElse(ResponseEntity.notFound().build());
 
 	}

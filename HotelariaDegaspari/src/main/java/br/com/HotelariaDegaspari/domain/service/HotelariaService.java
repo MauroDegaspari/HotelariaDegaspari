@@ -42,7 +42,6 @@ public class HotelariaService {
 	}
 
 	public HotelariaModel salvarServices(HotelariaModel hotel) {
-		HotelariaModel novoHotel = repository.save(hotel);
 		try {
 
 			if (this.validarHotel(hotel) == false) {
@@ -54,6 +53,7 @@ public class HotelariaService {
 			JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
 		}
 
+		HotelariaModel novoHotel = repository.save(hotel);
 		return novoHotel;
 
 	}
