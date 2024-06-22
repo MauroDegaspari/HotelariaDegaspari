@@ -8,7 +8,9 @@ import javax.swing.JOptionPane;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.domain.exception.ExceptionHotel;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
@@ -22,7 +24,7 @@ public class HotelariaService {
 	public HotelariaService(HotelariaRepository repository) {
 		this.repository = repository;
 	}
-
+	@Transactional(readOnly = true)
 	public List<HotelariaModel> listarTodosServices() {
 		List<HotelariaModel> hotel = repository.findAll();
 
@@ -41,7 +43,8 @@ public class HotelariaService {
 		return hotel;
 	}
 
-	public HotelariaModel salvarServices(HotelariaModel hotel) {
+	@Transactional
+	public HotelariaDto salvarServices(HotelariaModel hotel) {
 		try {
 
 			if (this.validarHotel(hotel) == false) {
@@ -52,12 +55,13 @@ public class HotelariaService {
 			System.out.println("erro :" + e);
 			JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
 		}
-
+		
 		HotelariaModel novoHotel = repository.save(hotel);
 		return novoHotel;
 
 	}
-
+	
+	@Transactional(readOnly = true)
 	public Optional<HotelariaModel> acharIdService(int hotel) {
 
 		Optional<HotelariaModel> hotelId = repository.findById(hotel);
@@ -65,7 +69,7 @@ public class HotelariaService {
 		try {
 
 			if (!hotelId.isPresent())
-				throw new ExceptionHotel("Hotel Não encontrado por ID");
+				throw new ExceptionHotel("Hotel Não encontrado");
 
 		} catch (Exception e) {
 
@@ -76,7 +80,7 @@ public class HotelariaService {
 		return hotelId;
 
 	}
-
+	@Transactional(readOnly = true)
 	public Optional<HotelariaModel> acharHotelCnpj(String cnpj) {
 
 		Optional<HotelariaModel> cnpjHotel = repository.acharCnpj(cnpj);
@@ -94,14 +98,14 @@ public class HotelariaService {
 		return cnpjHotel;
 
 	}
-	
+	@Transactional(readOnly = true)
 	public Optional<HotelariaModel> acharHotelLocal(String local) {
 
 		Optional<HotelariaModel> LocalidadeHotel = repository.AcharPorLocalidade(local);
 
 		try {
 			if (!LocalidadeHotel.isPresent())
-				throw new ExceptionHotel("Hotel Não encontrado por CNPJ");
+				throw new ExceptionHotel("Hotel Não encontrado por LOCALIZAÇÃO");
 
 		} catch (Exception e) {
 
@@ -113,16 +117,11 @@ public class HotelariaService {
 
 	}
 	
-
+	@Transactional
 	public Optional<HotelariaModel> deletarService(int id) {
 
 		Optional<HotelariaModel> deletarHotel = repository.findById(id);
-		try {
-			if (!deletarHotel.isPresent())
-				throw new ExceptionHotel("Não existe o hotel para DELETAR");
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+			
 		repository.delete(deletarHotel.get());
 		return deletarHotel;
 	}
@@ -133,7 +132,7 @@ public class HotelariaService {
 
 		for (HotelariaModel hotelariaModel : todosHoteis) {
 			if (hotelariaModel.getCnpj().equals(hotel.getCnpj())) {
-				throw new Exception("Hotel já existe!");
+				throw new Exception("Hotel com CNPJ " + hotelariaModel.getCnpj() +" já existe!");
 			}
 		}
 
@@ -153,6 +152,19 @@ public class HotelariaService {
 		return true;
 	}
 
+	public HotelariaDto paraDto(HotelariaDto dto) {
+		HotelariaModel model = new HotelariaModel();
+		BeanUtils.copyProperties(dto, model);
+		return dto;
+	}
+	
+	public HotelariaModel paraModel(HotelariaModel model) {
+		HotelariaDto dto = new HotelariaDto();
+		BeanUtils.copyProperties(model, dto);
+		return model;
+	}
+	
+	
 	public HotelariaModel validarEdicaoHotel(int id, HotelariaModel hotel) {
 
 		HotelariaModel hotelNovo = acharIdService(id).get();
@@ -160,7 +172,8 @@ public class HotelariaService {
 		try {
 
 			BeanUtils.copyProperties(hotel, hotelNovo);
-			salvarServices(hotelNovo);
+			repository.save(hotelNovo);
+			//salvarServices(hotelNovo);
 
 		} catch (Exception e) {
 			e.printStackTrace();

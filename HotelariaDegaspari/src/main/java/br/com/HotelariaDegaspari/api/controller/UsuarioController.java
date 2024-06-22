@@ -2,11 +2,10 @@ package br.com.HotelariaDegaspari.api.controller;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.DeleteMapping; 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,9 +50,9 @@ public class UsuarioController {
 
 		HotelariaModel hotel = service.salvarServices(hotelaria);
 
-		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar:  o(╥﹏╥)o	(｡•́︿•̀｡)")
+		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar: ")
 							 : ResponseEntity.status(HttpStatus.OK)
-						.body("Hotel " + hotel.getNome() + " Salvo com Sucesso. (/^▽^)/... (ﾉﾟ0ﾟ)ﾉ~");
+						.body("Hotel " + hotel.getNome() + " Salvo com Sucesso. ");
 
 	}
 
@@ -61,13 +60,13 @@ public class UsuarioController {
 	public ResponseEntity<Object> editar(@PathVariable(value = "id") int id, @RequestBody HotelariaModel hotel) {
 
 		if (hotel.equals(null))
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado (•ิ_•ิ) (•ิ_•ิ)");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado");
 		
 		service.validarEdicaoHotel(id, hotel);
 		
-		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Editar: (•ิ_•ิ) o(╥﹏╥)o	(｡•́︿•̀｡)")
+		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Editar:")
 							 : ResponseEntity.status(HttpStatus.OK)
-						.body("Hotel " + hotel.getNome() + " Editado com Sucesso. (ﾉﾟ0ﾟ)ﾉ... (/^▽^)/");
+						.body("Hotel " + hotel.getNome() + " Editado com Sucesso.");
 
 	}
 
@@ -104,7 +103,7 @@ public class UsuarioController {
 	 */
 	@GetMapping(value = "/buscarLocalidade/{local}")
 	public ResponseEntity<HotelariaModel> acharPorLocalidade(@PathVariable(value = "local") String local) {
-		return service.acharHotelLocal(local).map(mapeandoCnpj -> ResponseEntity.ok().body(mapeandoCnpj))
+		return service.acharHotelLocal(local).map(mapeandoLocaidade -> ResponseEntity.ok().body(mapeandoLocaidade))
 				.orElse(ResponseEntity.notFound().build());
 
 	}

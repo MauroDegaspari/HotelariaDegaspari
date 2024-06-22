@@ -20,6 +20,8 @@ public class HotelariaModel {
 	
 	@Column(name = "nome")
 	private String nome;
+	
+	@Column(name = "local")
 	private String local;
 	private int capacidade;
 	
