@@ -44,7 +44,7 @@ public class HotelariaService {
 	}
 
 	@Transactional
-	public HotelariaDto salvarServices(HotelariaModel hotel) {
+	public HotelariaModel salvarServices(HotelariaModel hotel) {
 		try {
 
 			if (this.validarHotel(hotel) == false) {
@@ -55,7 +55,7 @@ public class HotelariaService {
 			System.out.println("erro :" + e);
 			JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
 		}
-		
+
 		HotelariaModel novoHotel = repository.save(hotel);
 		return novoHotel;
 
@@ -154,13 +154,13 @@ public class HotelariaService {
 
 	public HotelariaDto paraDto(HotelariaDto dto) {
 		HotelariaModel model = new HotelariaModel();
-		BeanUtils.copyProperties(dto, model);
+		BeanUtils.copyProperties(model, dto );
 		return dto;
 	}
 	
 	public HotelariaModel paraModel(HotelariaModel model) {
 		HotelariaDto dto = new HotelariaDto();
-		BeanUtils.copyProperties(model, dto);
+		BeanUtils.copyProperties(dto, model);
 		return model;
 	}
 	
