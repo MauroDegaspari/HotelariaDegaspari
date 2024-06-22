@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JOptionPane;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.domain.exception.ExceptionHotel;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
@@ -23,7 +24,7 @@ public class HotelariaService {
 	public HotelariaService(HotelariaRepository repository) {
 		this.repository = repository;
 	}
-	// @Transactional(readOnly = true)
+	@Transactional(readOnly = true)
 	public List<HotelariaModel> listarTodosServices() {
 		List<HotelariaModel> hotel = repository.findAll();
 
@@ -43,7 +44,7 @@ public class HotelariaService {
 	}
 
 	@Transactional
-	public HotelariaModel salvarServices(HotelariaModel hotel) {
+	public HotelariaDto salvarServices(HotelariaModel hotel) {
 		try {
 
 			if (this.validarHotel(hotel) == false) {
@@ -54,12 +55,13 @@ public class HotelariaService {
 			System.out.println("erro :" + e);
 			JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
 		}
-
+		
 		HotelariaModel novoHotel = repository.save(hotel);
 		return novoHotel;
 
 	}
-
+	
+	@Transactional(readOnly = true)
 	public Optional<HotelariaModel> acharIdService(int hotel) {
 
 		Optional<HotelariaModel> hotelId = repository.findById(hotel);
@@ -78,7 +80,7 @@ public class HotelariaService {
 		return hotelId;
 
 	}
-
+	@Transactional(readOnly = true)
 	public Optional<HotelariaModel> acharHotelCnpj(String cnpj) {
 
 		Optional<HotelariaModel> cnpjHotel = repository.acharCnpj(cnpj);
@@ -96,7 +98,7 @@ public class HotelariaService {
 		return cnpjHotel;
 
 	}
-	
+	@Transactional(readOnly = true)
 	public Optional<HotelariaModel> acharHotelLocal(String local) {
 
 		Optional<HotelariaModel> LocalidadeHotel = repository.AcharPorLocalidade(local);
@@ -115,7 +117,7 @@ public class HotelariaService {
 
 	}
 	
-
+	@Transactional
 	public Optional<HotelariaModel> deletarService(int id) {
 
 		Optional<HotelariaModel> deletarHotel = repository.findById(id);
@@ -150,6 +152,19 @@ public class HotelariaService {
 		return true;
 	}
 
+	public HotelariaDto paraDto(HotelariaDto dto) {
+		HotelariaModel model = new HotelariaModel();
+		BeanUtils.copyProperties(dto, model);
+		return dto;
+	}
+	
+	public HotelariaModel paraModel(HotelariaModel model) {
+		HotelariaDto dto = new HotelariaDto();
+		BeanUtils.copyProperties(model, dto);
+		return model;
+	}
+	
+	
 	public HotelariaModel validarEdicaoHotel(int id, HotelariaModel hotel) {
 
 		HotelariaModel hotelNovo = acharIdService(id).get();
