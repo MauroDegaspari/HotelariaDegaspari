@@ -10,7 +10,7 @@ public class HotelariaDto {
 	private String nome;
 	private String local;
 	private int capacidade;
-	private int cnpj;
+	private String cnpj;
 	
 	public int getId() {
 		return id;
@@ -36,10 +36,10 @@ public class HotelariaDto {
 	public void setCapacidade(int capacidade) {
 		this.capacidade = capacidade;
 	}
-	public int getCnpj() {
+	public String getCnpj() {
 		return cnpj;
 	}
-	public void setCnpj(int cnpj) {
+	public void setCnpj(String cnpj) {
 		this.cnpj = cnpj;
 	}
 	

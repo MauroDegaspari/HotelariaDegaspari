@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping; 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.domain.service.HotelariaService;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 
@@ -27,14 +28,27 @@ public class UsuarioController {
 
 	@Autowired
 	private HotelariaService service;
-
+	
+	/**
+	 * 
+	 * @apiNote Exercicio 7
+	 * @since 25/06/2024 22:27:21
+	 * @author Mauro Degaspari
+	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado para o usuario como DTO.
+	 *		   Requisitos:
+	 *		   Criar o metodo de listar e update tendo como retorno DTO;
+	 *		   Tendo no controller apenas DTO;
+	 *		
+	 *		   use todo o seu conhecimento (Vá além)
+	 * 
+	 */
 	@GetMapping(value = "/listarTodos")
 	@ResponseBody
-	public ResponseEntity<List<HotelariaModel>> ListarTodos() {
+	public ResponseEntity<List<HotelariaDto>> ListarTodos() {
 
-		List<HotelariaModel> hotel = service.listarTodosServices();
+		List<HotelariaDto> hotel = service.listarTodosHoteisServices();
 		return hotel.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(null) 
-						       : new ResponseEntity<List<HotelariaModel>>(hotel, HttpStatus.OK);
+						       : new ResponseEntity<List<HotelariaDto>>(hotel, HttpStatus.OK);
 
 	}
 
@@ -46,9 +60,9 @@ public class UsuarioController {
 
 	@PostMapping(value = "/salvar")
 	@ResponseBody
-	public ResponseEntity<Object> salvar(@RequestBody HotelariaModel hotelaria) {
+	public ResponseEntity<String> salvar(@RequestBody HotelariaDto hotelaria) {
 
-		HotelariaModel hotel = service.salvarServices(hotelaria);
+		HotelariaDto hotel = service.salvarServices(hotelaria);
 
 		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar: ")
 							 : ResponseEntity.status(HttpStatus.OK)
@@ -56,8 +70,21 @@ public class UsuarioController {
 
 	}
 
+	/**
+	 * 
+	 * @apiNote Exercicio 7
+	 * @since 25/06/2024 22:27:21
+	 * @author Mauro Degaspari
+	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado para o usuario como DTO.
+	 *		   Requisitos:
+	 *		   Criar o metodo de listar e update tendo como retorno DTO;
+	 *		   Tendo no controller apenas DTO;
+	 *		
+	 *		   use todo o seu conhecimento (Vá além)
+	 * 
+	 */
 	@PutMapping(value = "/editar/{id}")
-	public ResponseEntity<Object> editar(@PathVariable(value = "id") int id, @RequestBody HotelariaModel hotel) {
+	public ResponseEntity<String> editar(@PathVariable(value = "id") int id, @RequestBody HotelariaDto hotel) {
 
 		if (hotel.equals(null))
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado");

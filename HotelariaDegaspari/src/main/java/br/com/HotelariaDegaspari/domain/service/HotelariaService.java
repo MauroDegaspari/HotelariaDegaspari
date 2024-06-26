@@ -2,6 +2,7 @@ package br.com.HotelariaDegaspari.domain.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -24,13 +25,28 @@ public class HotelariaService {
 	public HotelariaService(HotelariaRepository repository) {
 		this.repository = repository;
 	}
+	
+	/**
+	 * 
+	 * @apiNote Exercicio 7
+	 * @since 25/06/2024 22:27:21
+	 * @author Mauro Degaspari
+	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado para o usuario como DTO.
+	 *		   Requisitos:
+	 *		   Criar o metodo de listar e update tendo como retorno DTO;
+	 *		   Tendo no controller apenas DTO;
+	 *		
+	 *		   use todo o seu conhecimento (Vá além)
+	 * 
+	 */
 	@Transactional(readOnly = true)
-	public List<HotelariaModel> listarTodosServices() {
-		List<HotelariaModel> hotel = repository.findAll();
+	public List<HotelariaDto> listarTodosHoteisServices() {
+		
+		List<HotelariaModel> hotelModel = repository.findAll();
 
 		try {
 
-			if (hotel.isEmpty())
+			if (hotelModel.isEmpty())
 				JOptionPane.showMessageDialog(null, "Não existe Hotel CADASTRADO. ");
 
 		} catch (Exception e) {
@@ -40,14 +56,17 @@ public class HotelariaService {
 
 		}
 
-		return hotel;
+		return listaParaDto(hotelModel);
 	}
 
 	@Transactional
-	public HotelariaModel salvarServices(HotelariaModel hotel) {
+	public HotelariaDto salvarServices(HotelariaDto hotelDto) {
+		
+		HotelariaModel model = paraModel(hotelDto);
+		
 		try {
 
-			if (this.validarHotel(hotel) == false) {
+			if (this.validarHotel(model) == false) {
 				return null;
 			}
 
@@ -56,8 +75,8 @@ public class HotelariaService {
 			JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
 		}
 
-		HotelariaModel novoHotel = repository.save(hotel);
-		return novoHotel;
+		HotelariaModel novoHotel = repository.save(model);
+		return paraDto(novoHotel);
 
 	}
 	
@@ -152,20 +171,24 @@ public class HotelariaService {
 		return true;
 	}
 
-	public HotelariaDto paraDto(HotelariaDto dto) {
-		HotelariaModel model = new HotelariaModel();
+	private HotelariaDto paraDto(HotelariaModel model) {
+		HotelariaDto dto = new HotelariaDto();
 		BeanUtils.copyProperties(model, dto );
 		return dto;
 	}
 	
-	public HotelariaModel paraModel(HotelariaModel model) {
-		HotelariaDto dto = new HotelariaDto();
+	private HotelariaModel paraModel(HotelariaDto dto) {
+		HotelariaModel model = new HotelariaModel();
 		BeanUtils.copyProperties(dto, model);
 		return model;
 	}
 	
+	private List<HotelariaDto> listaParaDto(List<HotelariaModel> listaModel){
+		return listaModel.stream().map(this::paraDto).collect(Collectors.toList());
+	}
 	
-	public HotelariaModel validarEdicaoHotel(int id, HotelariaModel hotel) {
+	
+	public HotelariaDto validarEdicaoHotel(int id, HotelariaDto hotel) {
 
 		HotelariaModel hotelNovo = acharIdService(id).get();
 
@@ -179,7 +202,7 @@ public class HotelariaService {
 			e.printStackTrace();
 			new ExceptionHotel("Erro: Editar hotel");
 		}
-		return hotelNovo;
+		return paraDto(hotelNovo);
 	}
 
 }
