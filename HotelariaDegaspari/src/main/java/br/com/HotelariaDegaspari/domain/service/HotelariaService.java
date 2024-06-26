@@ -1,5 +1,6 @@
 package br.com.HotelariaDegaspari.domain.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -184,7 +185,19 @@ public class HotelariaService {
 	}
 	
 	private List<HotelariaDto> listaParaDto(List<HotelariaModel> listaModel){
-		return listaModel.stream().map(this::paraDto).collect(Collectors.toList());
+		
+		List<HotelariaDto> listaDto = new ArrayList<>();
+		
+		for( HotelariaModel model : listaModel){
+			HotelariaDto dto = paraDto(model);
+			listaDto.add(dto);
+		}
+		
+		return listaDto;
+		
+		
+		//return listaModel.stream().map(model -> paraDto(model)).collect(Collectors.toList());
+		//return listaModel.stream().map(this::paraDto).collect(Collectors.toList())
 	}
 	
 	
