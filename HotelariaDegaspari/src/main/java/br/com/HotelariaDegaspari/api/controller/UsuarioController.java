@@ -43,7 +43,6 @@ public class UsuarioController {
 	 * 
 	 */
 	@GetMapping(value = "/listarTodos")
-	@ResponseBody
 	public ResponseEntity<List<HotelariaDto>> ListarTodos() {
 
 		List<HotelariaDto> hotel = service.listarTodosHoteisServices();
@@ -59,7 +58,6 @@ public class UsuarioController {
 	}
 
 	@PostMapping(value = "/salvar")
-	@ResponseBody
 	public ResponseEntity<String> salvar(@RequestBody HotelariaDto hotelaria) {
 
 		HotelariaDto hotel = service.salvarServices(hotelaria);

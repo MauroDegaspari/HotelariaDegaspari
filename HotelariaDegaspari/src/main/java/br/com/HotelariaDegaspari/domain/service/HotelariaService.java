@@ -26,23 +26,22 @@ public class HotelariaService {
 	public HotelariaService(HotelariaRepository repository) {
 		this.repository = repository;
 	}
-	
+
 	/**
 	 * 
 	 * @apiNote Exercicio 7
 	 * @since 25/06/2024 22:27:21
 	 * @author Mauro Degaspari
-	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado para o usuario como DTO.
-	 *		   Requisitos:
-	 *		   Criar o metodo de listar e update tendo como retorno DTO;
-	 *		   Tendo no controller apenas DTO;
-	 *		
-	 *		   use todo o seu conhecimento (Vá além)
+	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado
+	 *         para o usuario como DTO. Requisitos: Criar o metodo de listar e
+	 *         update tendo como retorno DTO; Tendo no controller apenas DTO;
+	 * 
+	 *         use todo o seu conhecimento (Vá além)
 	 * 
 	 */
 	@Transactional(readOnly = true)
 	public List<HotelariaDto> listarTodosHoteisServices() {
-		
+
 		List<HotelariaModel> hotelModel = repository.findAll();
 
 		try {
@@ -62,9 +61,9 @@ public class HotelariaService {
 
 	@Transactional
 	public HotelariaDto salvarServices(HotelariaDto hotelDto) {
-		
+
 		HotelariaModel model = paraModel(hotelDto);
-		
+
 		try {
 
 			if (this.validarHotel(model) == false) {
@@ -80,7 +79,7 @@ public class HotelariaService {
 		return paraDto(novoHotel);
 
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Optional<HotelariaModel> acharIdService(int hotel) {
 
@@ -89,7 +88,7 @@ public class HotelariaService {
 		try {
 
 			if (!hotelId.isPresent())
-				throw new ExceptionHotel("Hotel Não encontrado");
+				throw new ExceptionHotel("Hotel Não encontrado na base de dados");
 
 		} catch (Exception e) {
 
@@ -100,6 +99,7 @@ public class HotelariaService {
 		return hotelId;
 
 	}
+
 	@Transactional(readOnly = true)
 	public Optional<HotelariaModel> acharHotelCnpj(String cnpj) {
 
@@ -118,6 +118,7 @@ public class HotelariaService {
 		return cnpjHotel;
 
 	}
+
 	@Transactional(readOnly = true)
 	public Optional<HotelariaModel> acharHotelLocal(String local) {
 
@@ -136,12 +137,12 @@ public class HotelariaService {
 		return LocalidadeHotel;
 
 	}
-	
+
 	@Transactional
 	public Optional<HotelariaModel> deletarService(int id) {
 
 		Optional<HotelariaModel> deletarHotel = repository.findById(id);
-			
+
 		repository.delete(deletarHotel.get());
 		return deletarHotel;
 	}
@@ -152,7 +153,7 @@ public class HotelariaService {
 
 		for (HotelariaModel hotelariaModel : todosHoteis) {
 			if (hotelariaModel.getCnpj().equals(hotel.getCnpj())) {
-				throw new Exception("Hotel com CNPJ " + hotelariaModel.getCnpj() +" já existe!");
+				throw new Exception("Hotel com CNPJ " + hotelariaModel.getCnpj() + " já existe!");
 			}
 		}
 
@@ -174,46 +175,48 @@ public class HotelariaService {
 
 	private HotelariaDto paraDto(HotelariaModel model) {
 		HotelariaDto dto = new HotelariaDto();
-		BeanUtils.copyProperties(model, dto );
+		BeanUtils.copyProperties(model, dto);
 		return dto;
 	}
-	
+
 	private HotelariaModel paraModel(HotelariaDto dto) {
 		HotelariaModel model = new HotelariaModel();
 		BeanUtils.copyProperties(dto, model);
 		return model;
 	}
-	
-	private List<HotelariaDto> listaParaDto(List<HotelariaModel> listaModel){
-		
+
+	private List<HotelariaDto> listaParaDto(List<HotelariaModel> listaModel) {
+
 		List<HotelariaDto> listaDto = new ArrayList<>();
-		
-		for( HotelariaModel model : listaModel){
+
+		for (HotelariaModel model : listaModel) {
 			HotelariaDto dto = paraDto(model);
 			listaDto.add(dto);
 		}
-		
+
 		return listaDto;
-		
-		
-		//return listaModel.stream().map(model -> paraDto(model)).collect(Collectors.toList());
-		//return listaModel.stream().map(this::paraDto).collect(Collectors.toList())
+
+		// return listaModel.stream().map(model ->
+		// paraDto(model)).collect(Collectors.toList());
+		// return listaModel.stream().map(this::paraDto).collect(Collectors.toList())
 	}
-	
-	
+
 	public HotelariaDto validarEdicaoHotel(int id, HotelariaDto hotel) {
 
 		HotelariaModel hotelNovo = acharIdService(id).get();
 
 		try {
 
+			if (!hotelNovo.getCnpj().equals(hotel.getCnpj()))
+				throw new ExceptionHotel("CNPJ não pode ser alterado.");
+
 			BeanUtils.copyProperties(hotel, hotelNovo);
 			repository.save(hotelNovo);
-			//salvarServices(hotelNovo);
+			// salvarServices(hotelNovo);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			new ExceptionHotel("Erro: Editar hotel");
+			return null;
 		}
 		return paraDto(hotelNovo);
 	}
