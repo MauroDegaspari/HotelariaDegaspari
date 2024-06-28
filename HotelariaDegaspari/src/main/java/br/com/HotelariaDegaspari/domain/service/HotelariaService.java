@@ -81,7 +81,7 @@ public class HotelariaService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<HotelariaModel> acharIdService(int hotel) {
+	public Optional<HotelariaDto> acharIdService(int hotel) {
 
 		Optional<HotelariaModel> hotelId = repository.findById(hotel);
 
@@ -95,13 +95,16 @@ public class HotelariaService {
 			e.printStackTrace();
 			System.out.println("Erro: " + e.getMessage());
 		}
-
-		return hotelId;
+		
+		HotelariaDto cnpjAcharId = new HotelariaDto();
+		BeanUtils.copyProperties(hotelId.get(), cnpjAcharId);
+		
+		return Optional.of(cnpjAcharId);
 
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<HotelariaModel> acharHotelCnpj(String cnpj) {
+	public Optional<HotelariaDto> acharHotelCnpj(String cnpj) {
 
 		Optional<HotelariaModel> cnpjHotel = repository.acharCnpj(cnpj);
 
@@ -115,17 +118,22 @@ public class HotelariaService {
 			System.out.println("Erro: " + e.getMessage());
 		}
 
-		return cnpjHotel;
+		HotelariaDto cnpjDto = new HotelariaDto();
+		BeanUtils.copyProperties(cnpjHotel.get(), cnpjDto);// .get() - Se um valor estiver presente neste Opcional,
+															// retorna o valor, caso contrário lança
+															// NoSuchElementException.
+
+		return Optional.of(cnpjDto);// Optional.of - Retorna um Opcional com o valor presente não nulo especificado.
 
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<HotelariaModel> acharHotelLocal(String local) {
+	public Optional<HotelariaDto> acharHotelLocal(String local) {
 
-		Optional<HotelariaModel> LocalidadeHotel = repository.AcharPorLocalidade(local);
+		Optional<HotelariaModel> localidadeHotel = repository.AcharPorLocalidade(local);
 
 		try {
-			if (!LocalidadeHotel.isPresent())
+			if (!localidadeHotel.isPresent())
 				throw new ExceptionHotel("Hotel Não encontrado por LOCALIZAÇÃO");
 
 		} catch (Exception e) {
@@ -134,17 +142,35 @@ public class HotelariaService {
 			System.out.println("Erro: " + e.getMessage());
 		}
 
-		return LocalidadeHotel;
+		HotelariaDto dtoLocalidade = new HotelariaDto();
+		BeanUtils.copyProperties(localidadeHotel.get(), dtoLocalidade); // .get() - Se um valor estiver presente neste
+																		// Opcional, retorna o valor, caso contrário
+																		// lança NoSuchElementException.
+
+		return Optional.of(dtoLocalidade); // Optional.of - Retorna um Opcional com o valor presente não nulo
+											// especificado.
 
 	}
 
 	@Transactional
-	public Optional<HotelariaModel> deletarService(int id) {
+	public Optional<HotelariaDto> deletarService(int id) {
 
 		Optional<HotelariaModel> deletarHotel = repository.findById(id);
+		HotelariaDto dtoDelete = new HotelariaDto();
 
-		repository.delete(deletarHotel.get());
-		return deletarHotel;
+		try {
+			if (deletarHotel.isPresent()) {
+				BeanUtils.copyProperties(deletarHotel, dtoDelete);
+				repository.delete(deletarHotel.get());
+			} else {
+				return null;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return Optional.of(dtoDelete);
 	}
 
 	public boolean validarHotel(HotelariaModel hotel) throws Exception {
@@ -203,7 +229,7 @@ public class HotelariaService {
 
 	public HotelariaDto validarEdicaoHotel(int id, HotelariaDto hotel) {
 
-		HotelariaModel hotelNovo = acharIdService(id).get();
+		HotelariaModel hotelNovo = paraModel(acharIdService(id).get());
 
 		try {
 
@@ -212,7 +238,6 @@ public class HotelariaService {
 
 			BeanUtils.copyProperties(hotel, hotelNovo);
 			repository.save(hotelNovo);
-			// salvarServices(hotelNovo);
 
 		} catch (Exception e) {
 			e.printStackTrace();
