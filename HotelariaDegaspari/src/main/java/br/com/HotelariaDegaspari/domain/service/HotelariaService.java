@@ -1,9 +1,7 @@
 package br.com.HotelariaDegaspari.domain.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
+import br.com.HotelariaDegaspari.domain.conversoes.HotelariaConversao;
 import br.com.HotelariaDegaspari.domain.exception.ExceptionHotel;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
@@ -21,11 +20,14 @@ import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
 public class HotelariaService {
 
 	private final HotelariaRepository repository;
+	private final HotelariaConversao conversao;
 
 	@Autowired
-	public HotelariaService(HotelariaRepository repository) {
+	public HotelariaService(HotelariaRepository repository, HotelariaConversao conversao) {
 		this.repository = repository;
+		this.conversao = conversao;
 	}
+	
 
 	/**
 	 * 
@@ -55,29 +57,30 @@ public class HotelariaService {
 			System.out.println("Erro: " + e.getMessage());
 
 		}
-
-		return listaParaDto(hotelModel);
+		
+		return conversao.listaParaDto(hotelModel);
 	}
 
 	@Transactional
 	public HotelariaDto salvarServices(HotelariaDto hotelDto) {
 
-		HotelariaModel model = paraModel(hotelDto);
+		HotelariaModel model = conversao.paraModel(hotelDto);
 
 		try {
 
-			if (this.validarHotel(model) == false) {
+			if (this.validarHotel(hotelDto) == false) {
 				return null;
 			}
+			
+			HotelariaModel novoHotel = repository.save(model);
+			return conversao.paraDto(novoHotel);
 
 		} catch (Exception e) {
 			System.out.println("erro :" + e);
 			JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
 		}
 
-		HotelariaModel novoHotel = repository.save(model);
-		return paraDto(novoHotel);
-
+		return null;
 	}
 
 	@Transactional(readOnly = true)
@@ -173,7 +176,7 @@ public class HotelariaService {
 		return Optional.of(dtoDelete);
 	}
 
-	public boolean validarHotel(HotelariaModel hotel) throws Exception {
+	public boolean validarHotel(HotelariaDto hotel) throws Exception {
 
 		List<HotelariaModel> todosHoteis = repository.findAll();
 
@@ -199,37 +202,9 @@ public class HotelariaService {
 		return true;
 	}
 
-	private HotelariaDto paraDto(HotelariaModel model) {
-		HotelariaDto dto = new HotelariaDto();
-		BeanUtils.copyProperties(model, dto);
-		return dto;
-	}
-
-	private HotelariaModel paraModel(HotelariaDto dto) {
-		HotelariaModel model = new HotelariaModel();
-		BeanUtils.copyProperties(dto, model);
-		return model;
-	}
-
-	private List<HotelariaDto> listaParaDto(List<HotelariaModel> listaModel) {
-
-		List<HotelariaDto> listaDto = new ArrayList<>();
-
-		for (HotelariaModel model : listaModel) {
-			HotelariaDto dto = paraDto(model);
-			listaDto.add(dto);
-		}
-
-		return listaDto;
-
-		// return listaModel.stream().map(model ->
-		// paraDto(model)).collect(Collectors.toList());
-		// return listaModel.stream().map(this::paraDto).collect(Collectors.toList())
-	}
-
 	public HotelariaDto validarEdicaoHotel(int id, HotelariaDto hotel) {
 
-		HotelariaModel hotelNovo = paraModel(acharIdService(id).get());
+		HotelariaModel hotelNovo = conversao.paraModel(acharIdService(id).get());
 
 		try {
 
@@ -243,7 +218,7 @@ public class HotelariaService {
 			e.printStackTrace();
 			return null;
 		}
-		return paraDto(hotelNovo);
+		return conversao.paraDto(hotelNovo);
 	}
 
 }
