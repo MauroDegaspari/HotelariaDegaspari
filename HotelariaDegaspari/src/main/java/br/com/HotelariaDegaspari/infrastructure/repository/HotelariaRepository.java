@@ -15,7 +15,8 @@ public interface HotelariaRepository extends JpaRepository<HotelariaModel, Integ
 	@Query(value = "SELECT * FROM TB_HOTELARIA h WHERE h.CNPJ = :cnpj ", nativeQuery = true)
 	Optional<HotelariaModel> acharCnpj(@Param("cnpj")String cnpj);
 	
-	@Query(value = "SELECT * FROM TB_HOTELARIA h WHERE Upper(h.LOCAL) LIKE Upper('%:local%') ", nativeQuery = true)
-	//@Query(value = "SELECT * FROM TB_HOTELARIA  WHERE LOCAL = :local", nativeQuery = true)
+	@Query(value = "SELECT * "
+				 + "FROM TB_HOTELARIA h "
+				 + "WHERE Upper(h.LOCAL) LIKE Upper(CONCAT('%', :local, '%'))", nativeQuery = true)
 	Optional<HotelariaModel> AcharPorLocalidade(@Param("local") String local);
 }

@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.domain.service.HotelariaService;
-import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 
 @RestController
 //@RequiredArgsConstructor
@@ -28,31 +26,30 @@ public class UsuarioController {
 
 	@Autowired
 	private HotelariaService service;
-	
+
 	/**
 	 * 
 	 * @apiNote Exercicio 7
 	 * @since 25/06/2024 22:27:21
 	 * @author Mauro Degaspari
-	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado para o usuario como DTO.
-	 *		   Requisitos:
-	 *		   Criar o metodo de listar e update tendo como retorno DTO;
-	 *		   Tendo no controller apenas DTO;
-	 *		
-	 *		   use todo o seu conhecimento (Vá além)
+	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado
+	 *         para o usuario como DTO. Requisitos: Criar o metodo de listar e
+	 *         update tendo como retorno DTO; Tendo no controller apenas DTO;
+	 * 
+	 *         use todo o seu conhecimento (Vá além)
 	 * 
 	 */
 	@GetMapping(value = "/listarTodos")
 	public ResponseEntity<List<HotelariaDto>> ListarTodos() {
 
 		List<HotelariaDto> hotel = service.listarTodosHoteisServices();
-		return hotel.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(null) 
-						       : new ResponseEntity<List<HotelariaDto>>(hotel, HttpStatus.OK);
+		return hotel.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
+				: new ResponseEntity<List<HotelariaDto>>(hotel, HttpStatus.OK);
 
 	}
 
 	@GetMapping(value = "/unicoHotel/{id}")
-	public ResponseEntity<HotelariaModel> Achar(@PathVariable int id) {
+	public ResponseEntity<HotelariaDto> Achar(@PathVariable int id) {
 		return service.acharIdService(id).map(mapeando -> ResponseEntity.ok().body(mapeando))
 				.orElse(ResponseEntity.notFound().build());
 	}
@@ -63,8 +60,7 @@ public class UsuarioController {
 		HotelariaDto hotel = service.salvarServices(hotelaria);
 
 		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Salvar: ")
-							 : ResponseEntity.status(HttpStatus.OK)
-						.body("Hotel " + hotel.getNome() + " Salvo com Sucesso. ");
+				: ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() + " Salvo com Sucesso. ");
 
 	}
 
@@ -73,12 +69,11 @@ public class UsuarioController {
 	 * @apiNote Exercicio 7
 	 * @since 25/06/2024 22:27:21
 	 * @author Mauro Degaspari
-	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado para o usuario como DTO.
-	 *		   Requisitos:
-	 *		   Criar o metodo de listar e update tendo como retorno DTO;
-	 *		   Tendo no controller apenas DTO;
-	 *		
-	 *		   use todo o seu conhecimento (Vá além)
+	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado
+	 *         para o usuario como DTO. Requisitos: Criar o metodo de listar e
+	 *         update tendo como retorno DTO; Tendo no controller apenas DTO;
+	 * 
+	 *         use todo o seu conhecimento (Vá além)
 	 * 
 	 */
 	@PutMapping(value = "/editar/{id}")
@@ -86,12 +81,10 @@ public class UsuarioController {
 
 		if (hotel.equals(null))
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel nao encontrado");
-		
-		service.validarEdicaoHotel(id, hotel);
-		
-		return hotel == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Editar:")
-							 : ResponseEntity.status(HttpStatus.OK)
-						.body("Hotel " + hotel.getNome() + " Editado com Sucesso.");
+
+		return service.validarEdicaoHotel(id, hotel) == null
+				? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Editar:")
+				: ResponseEntity.status(HttpStatus.OK).body("Hotel " + hotel.getNome() + " Editado com Sucesso.");
 
 	}
 
@@ -99,7 +92,7 @@ public class UsuarioController {
 	public ResponseEntity<?> deletar(@PathVariable int id) {
 		return service.acharIdService(id).map(mapeandoHotel -> {
 			service.deletarService(id);
-			return ResponseEntity.ok().body("Hotel " + mapeandoHotel.getNome()+ " deletado com SUCESSO ");
+			return ResponseEntity.ok().body("Hotel " + mapeandoHotel.getNome() + " deletado com SUCESSO ");
 		}).orElse(ResponseEntity.notFound().build());
 
 	}
@@ -112,22 +105,23 @@ public class UsuarioController {
 	 * @return Trazendo hotel por CNPJ cadastrado
 	 */
 	@GetMapping(value = "/buscarCnpj/{cnpj}")
-	public ResponseEntity<HotelariaModel> acharPeloCnpj(@PathVariable(value = "cnpj") String cnpj) {
+	public ResponseEntity<HotelariaDto> acharPeloCnpj(@PathVariable(value = "cnpj") String cnpj) {
 		return service.acharHotelCnpj(cnpj).map(mapeandoCnpj -> ResponseEntity.ok().body(mapeandoCnpj))
 				.orElse(ResponseEntity.notFound().build());
 
 	}
-	
+
 	/**
 	 * 
 	 * @apiNote Exercicio 6
 	 * @since 21/06/2024 21:07:21
 	 * @author Mauro Degaspari
-	 * @return Crie outro metodo personalizado. Podendo ser uma nova 'buscaPorAlgumaCoisa', podendo ser um
-     *         novo 'deletarPorAlgumaCoisa', 'updatePorAlgumaCoisa'. Faça de acordo como foi feito em aula.
+	 * @return Crie outro metodo personalizado. Podendo ser uma nova
+	 *         'buscaPorAlgumaCoisa', podendo ser um novo 'deletarPorAlgumaCoisa',
+	 *         'updatePorAlgumaCoisa'. Faça de acordo como foi feito em aula.
 	 */
 	@GetMapping(value = "/buscarLocalidade/{local}")
-	public ResponseEntity<HotelariaModel> acharPorLocalidade(@PathVariable(value = "local") String local) {
+	public ResponseEntity<HotelariaDto> acharPorLocalidade(@PathVariable(value = "local") String local) {
 		return service.acharHotelLocal(local).map(mapeandoLocaidade -> ResponseEntity.ok().body(mapeandoLocaidade))
 				.orElse(ResponseEntity.notFound().build());
 
