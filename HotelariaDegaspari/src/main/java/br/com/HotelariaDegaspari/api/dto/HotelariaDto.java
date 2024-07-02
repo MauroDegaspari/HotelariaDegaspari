@@ -1,16 +1,31 @@
 package br.com.HotelariaDegaspari.api.dto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
+
 public class HotelariaDto {
 	
 	public HotelariaDto() {
 		
 	}
-	
+	@JsonProperty
 	private int id;
+	
+	@NotNull(message = "Nome não pode ser null")
 	private String nome;
+	
+	@NotNull(message = "Local não pode ser null")
 	private String local;
+	
+	@Size(min = 1, max = 100, message = "teste capacidade")
 	private int capacidade;
+	
 	private String cnpj;
+	
 	
 	public int getId() {
 		return id;
