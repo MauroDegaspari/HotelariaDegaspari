@@ -9,16 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 @Entity
-@Setter
-@Getter
-@Builder
-@NoArgsConstructor
 @Table(name ="TB_CLIENTES")
 public class ClienteModel {
 	
@@ -32,4 +23,41 @@ public class ClienteModel {
 	private int cpf;
 	
 	private int fone;
+
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public int getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(int cpf) {
+		this.cpf = cpf;
+	}
+
+	public int getFone() {
+		return fone;
+	}
+
+	public void setFone(int fone) {
+		this.fone = fone;
+	}
+	
+	
+	
 }
+
+
