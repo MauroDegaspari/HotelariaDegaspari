@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.domain.conversoes.HotelariaConversao;
-import br.com.HotelariaDegaspari.domain.exception.ExceptionHotel;
+import br.com.HotelariaDegaspari.infrastructure.exceptions.ImprocessavelException;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
 
@@ -93,7 +93,7 @@ public class HotelariaService {
 		try {
 
 			if (!hotelId.isPresent())
-				throw new ExceptionHotel("Hotel Não encontrado na base de dados");
+				throw new ImprocessavelException("Hotel Não encontrado na base de dados");
 
 		} catch (Exception e) {
 
@@ -115,7 +115,7 @@ public class HotelariaService {
 
 		try {
 			if (!cnpjHotel.isPresent())
-				throw new ExceptionHotel("Hotel Não encontrado por CNPJ");
+				throw new ImprocessavelException("Hotel Não encontrado por CNPJ");
 
 		} catch (Exception e) {
 
@@ -144,7 +144,7 @@ public class HotelariaService {
 
 				if (!LocalNovo.isPresent()) {
 
-					throw new ExceptionHotel("Hotel Não encontrado por LOCALIZAÇÃO");
+					throw new ImprocessavelException("Hotel Não encontrado por LOCALIZAÇÃO");
 				} else {
 					HotelariaDto dto = new HotelariaDto();
 					BeanUtils.copyProperties(LocalNovo.get(), dto); // .get() - Se um valor estiver presente
@@ -227,7 +227,7 @@ public class HotelariaService {
 		try {
 
 			if (!hotelNovo.getCnpj().equals(hotel.getCnpj()))
-				throw new ExceptionHotel("CNPJ não pode ser alterado.");
+				throw new ImprocessavelException("CNPJ não pode ser alterado.");
 
 			BeanUtils.copyProperties(hotel, hotelNovo);
 			repository.save(hotelNovo);
