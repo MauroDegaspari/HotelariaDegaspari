@@ -20,7 +20,7 @@ import br.com.HotelariaDegaspari.domain.service.HotelariaService;
 @RestController
 //@RequiredArgsConstructor
 @RequestMapping("/app")
-public class UsuarioController {
+public class HotelariaController {
 
 	// private final HotelariaRepository repository;
 
