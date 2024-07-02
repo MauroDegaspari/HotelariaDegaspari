@@ -12,16 +12,16 @@ public class HotelariaDto {
 	public HotelariaDto() {
 		
 	}
-	@JsonProperty
+	//@JsonProperty
 	private int id;
 	
-	@NotNull(message = "Nome não pode ser null")
+	//@NotNull(message = "Nome não pode ser null")
 	private String nome;
 	
-	@NotNull(message = "Local não pode ser null")
+	//@NotNull(message = "Local não pode ser null")
 	private String local;
 	
-	@Size(min = 1, max = 100, message = "teste capacidade")
+	//@Size(min = 1, max = 100, message = "teste capacidade")
 	private int capacidade;
 	
 	private String cnpj;
