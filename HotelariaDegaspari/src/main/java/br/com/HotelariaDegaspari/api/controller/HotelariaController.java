@@ -20,7 +20,7 @@ import br.com.HotelariaDegaspari.domain.service.HotelariaService;
 @RestController
 //@RequiredArgsConstructor
 @RequestMapping("/app")
-public class UsuarioController {
+public class HotelariaController {
 
 	// private final HotelariaRepository repository;
 
@@ -121,7 +121,7 @@ public class UsuarioController {
 	 *         'updatePorAlgumaCoisa'. Faça de acordo como foi feito em aula.
 	 */
 	@GetMapping(value = "/buscarLocalidade/{local}")
-	public ResponseEntity<HotelariaDto> acharPorLocalidade(@PathVariable(value = "local") String local) {
+	public ResponseEntity<List<HotelariaDto>> acharPorLocalidade(@PathVariable(value = "local") String local) {
 		return service.acharHotelLocal(local).map(mapeandoLocaidade -> ResponseEntity.ok().body(mapeandoLocaidade))
 				.orElse(ResponseEntity.notFound().build());
 

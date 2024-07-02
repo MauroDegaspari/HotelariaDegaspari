@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 
-@Component
+@Component //será automaticamente detectada pelo Spring e registrada como um bean no contêiner.
 public class HotelariaConversao {
 	
 	public HotelariaDto paraDto(HotelariaModel model) {
@@ -37,7 +37,7 @@ public class HotelariaConversao {
 
 		// return listaModel.stream().map(model ->
 		// paraDto(model)).collect(Collectors.toList());
-		// return listaModel.stream().map(this::paraDto).collect(Collectors.toList())
+		// 	
 	}
 
 }

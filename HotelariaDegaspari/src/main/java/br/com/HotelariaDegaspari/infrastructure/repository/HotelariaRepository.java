@@ -1,5 +1,6 @@
 package br.com.HotelariaDegaspari.infrastructure.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +19,5 @@ public interface HotelariaRepository extends JpaRepository<HotelariaModel, Integ
 	@Query(value = "SELECT * "
 				 + "FROM TB_HOTELARIA h "
 				 + "WHERE Upper(h.LOCAL) LIKE Upper(CONCAT('%', :local, '%'))", nativeQuery = true)
-	Optional<HotelariaModel> AcharPorLocalidade(@Param("local") String local);
+	List<Optional<HotelariaModel>> AcharPorLocalidade(@Param("local") String local);
 }
