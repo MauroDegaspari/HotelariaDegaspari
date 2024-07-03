@@ -71,7 +71,7 @@ public class HotelariaService {
 
 		HotelariaModel model = conversao.paraModel(hotelDto);
 
-		try {
+//		try {
 
 			if (this.validarHotel(hotelDto) == false) {
 				return null;
@@ -80,14 +80,12 @@ public class HotelariaService {
 			HotelariaModel novoHotel = repository.save(model);
 			return conversao.paraDto(novoHotel);
 
-		} catch (ConflitoException e) {
-			e.printStackTrace();
-			throw new ConflitoException("Erro: TEste");
-		} catch (NegocioException e) {
-			e.printStackTrace();
-		}
-
-		return null;
+//		 catch (NegocioException e) {
+//			e.printStackTrace();
+//			throw new ConflitoException("Erro: TEste");
+//		}
+//
+//		 return null;
 	}
 
 	@Transactional(readOnly = true)

@@ -4,20 +4,20 @@ import java.time.LocalDateTime;
 
 public class ErrosResponse {
 	
-	private String messager;
+	private String message;
 	private LocalDateTime data;
 	private int status;
 	private String path;
 	
 	
-	public ErrosResponse(String message, LocalDateTime data2, int value, String requestURI) {
+	public ErrosResponse(String message, LocalDateTime data, int status, String path) {
 		
 	}
 	public String getMessager() {
-		return messager;
+		return message;
 	}
-	public void setMessager(String messager) {
-		this.messager = messager;
+	public void setMessager(String message) {
+		this.message = message;
 	}
 	public LocalDateTime getData() {
 		return data;
