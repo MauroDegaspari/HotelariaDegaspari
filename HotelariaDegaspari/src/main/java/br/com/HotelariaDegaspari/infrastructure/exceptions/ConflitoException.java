@@ -8,11 +8,11 @@ public class ConflitoException extends RuntimeException{
 
 	private static final long serialVersionUID = 1L;
 
-	public ConflitoException(String erroConflict) {
-		super(erroConflict);
+	public ConflitoException(String message) {
+		super(message);
 	}
 	
-	public ConflitoException(String erroUnprocessable, Throwable cause) {
-		super(erroUnprocessable, cause);
+	public ConflitoException(String message, Throwable cause) {
+		super(message, cause);
 	}
 }
