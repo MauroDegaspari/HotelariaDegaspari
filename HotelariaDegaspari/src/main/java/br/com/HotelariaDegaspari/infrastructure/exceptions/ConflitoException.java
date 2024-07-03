@@ -1,8 +1,18 @@
 package br.com.HotelariaDegaspari.infrastructure.exceptions;
 
-public class ConflitoException extends Exception{
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.CONFLICT)
+public class ConflitoException extends RuntimeException{
+
+	private static final long serialVersionUID = 1L;
 
 	public ConflitoException(String erroConflict) {
 		super(erroConflict);
+	}
+	
+	public ConflitoException(String erroUnprocessable, Throwable cause) {
+		super(erroUnprocessable, cause);
 	}
 }

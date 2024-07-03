@@ -1,9 +1,19 @@
 package br.com.HotelariaDegaspari.infrastructure.exceptions;
 
-public class ImprocessavelException extends Exception {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+public class ImprocessavelException extends RuntimeException {
 	
+	private static final long serialVersionUID = 1L;
+
 	public ImprocessavelException(String erroUnprocessable) {
 		super(erroUnprocessable);
+	}
+	
+	public ImprocessavelException(String erroUnprocessable, Throwable cause) {
+		super(erroUnprocessable, cause);
 	}
 
 }

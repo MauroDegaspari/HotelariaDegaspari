@@ -11,10 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException.Conflict;
 
 import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.domain.conversoes.HotelariaConversao;
+import br.com.HotelariaDegaspari.infrastructure.exceptions.ConflitoException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.ImprocessavelException;
+import br.com.HotelariaDegaspari.infrastructure.exceptions.NegocioException;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
 
@@ -77,9 +80,11 @@ public class HotelariaService {
 			HotelariaModel novoHotel = repository.save(model);
 			return conversao.paraDto(novoHotel);
 
-		} catch (Exception e) {
-			System.out.println("erro :" + e);
-			JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage());
+		} catch (ConflitoException e) {
+			e.printStackTrace();
+			throw new ConflitoException("Erro: TEste");
+		} catch (NegocioException e) {
+			e.printStackTrace();
 		}
 
 		return null;
@@ -192,26 +197,26 @@ public class HotelariaService {
 		return Optional.of(dtoDelete);
 	}
 
-	public boolean validarHotel(HotelariaDto hotel) throws Exception {
+	public boolean validarHotel(HotelariaDto hotel) throws ConflitoException {
 
 		List<HotelariaModel> todosHoteis = repository.findAll();
 
 		for (HotelariaModel hotelariaModel : todosHoteis) {
 			if (hotelariaModel.getCnpj().equals(hotel.getCnpj())) {
-				throw new Exception("Hotel com CNPJ " + hotelariaModel.getCnpj() + " já existe!");
+				throw new ConflitoException("Hotel com CNPJ " + hotelariaModel.getCnpj() + " já existe!");
 			}
 		}
 
 		if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
-			throw new Exception("campo vazio, nome ou cnpj");
+			throw new ConflitoException("campo vazio, nome ou cnpj");
 
 		if (hotel.getCnpj().length() != 14) {
-			throw new Exception("Erro: CNPJ deve conter 14 numeros");
+			throw new ConflitoException("Erro: CNPJ deve conter 14 numeros");
 		}
 
 		if (hotel.getCapacidade() < 0) {
 
-			throw new Exception("Capacidade tem que ser maior que 0");
+			throw new ConflitoException("Capacidade tem que ser maior que 0");
 
 		}
 
@@ -232,9 +237,11 @@ public class HotelariaService {
 			BeanUtils.copyProperties(hotel, hotelNovo);
 			repository.save(hotelNovo);
 
-		} catch (Exception e) {
+		} catch (ImprocessavelException e) {
 			e.printStackTrace();
 			return null;
+		} catch (NegocioException e){
+			throw new NegocioException("Erro ao vaidar edição de hotel");
 		}
 		return conversao.paraDto(hotelNovo);
 	}

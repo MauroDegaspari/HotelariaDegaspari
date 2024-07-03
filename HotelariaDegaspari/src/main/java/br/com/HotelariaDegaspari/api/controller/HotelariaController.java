@@ -16,10 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.domain.service.HotelariaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 //@RequiredArgsConstructor
 @RequestMapping("/app")
+@Tag(name = "TB_HOTELARIA")
 public class HotelariaController {
 
 	// private final HotelariaRepository repository;
@@ -27,18 +32,6 @@ public class HotelariaController {
 	@Autowired
 	private HotelariaService service;
 
-	/**
-	 * 
-	 * @apiNote Exercicio 7
-	 * @since 25/06/2024 22:27:21
-	 * @author Mauro Degaspari
-	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado
-	 *         para o usuario como DTO. Requisitos: Criar o metodo de listar e
-	 *         update tendo como retorno DTO; Tendo no controller apenas DTO;
-	 * 
-	 *         use todo o seu conhecimento (Vá além)
-	 * 
-	 */
 	@GetMapping(value = "/listarTodos")
 	public ResponseEntity<List<HotelariaDto>> ListarTodos() {
 
@@ -53,7 +46,11 @@ public class HotelariaController {
 		return service.acharIdService(id).map(mapeando -> ResponseEntity.ok().body(mapeando))
 				.orElse(ResponseEntity.notFound().build());
 	}
-
+	
+	@Operation(summary = "Salvar novos Hoteis", method = "POST")
+	@ApiResponses(value = { @ApiResponse(responseCode ="200", description ="Hotel salvo com Sucesso"),
+						    @ApiResponse(responseCode ="500", description ="Erro ao salvar Hotel"),
+						    @ApiResponse(responseCode ="409", description ="Erro ???") })
 	@PostMapping(value = "/salvar")
 	public ResponseEntity<String> salvar(@RequestBody HotelariaDto hotelaria) {
 
@@ -64,18 +61,7 @@ public class HotelariaController {
 
 	}
 
-	/**
-	 * 
-	 * @apiNote Exercicio 7
-	 * @since 25/06/2024 22:27:21
-	 * @author Mauro Degaspari
-	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado
-	 *         para o usuario como DTO. Requisitos: Criar o metodo de listar e
-	 *         update tendo como retorno DTO; Tendo no controller apenas DTO;
-	 * 
-	 *         use todo o seu conhecimento (Vá além)
-	 * 
-	 */
+	
 	@PutMapping(value = "/editar/{id}")
 	public ResponseEntity<String> editar(@PathVariable(value = "id") int id, @RequestBody HotelariaDto hotel) {
 
@@ -97,13 +83,7 @@ public class HotelariaController {
 
 	}
 
-	/**
-	 * 
-	 * @apiNote Exercicio 5
-	 * @since 18/06/2024 21:07:21
-	 * @author Mauro Degaspari
-	 * @return Trazendo hotel por CNPJ cadastrado
-	 */
+	
 	@GetMapping(value = "/buscarCnpj/{cnpj}")
 	public ResponseEntity<HotelariaDto> acharPeloCnpj(@PathVariable(value = "cnpj") String cnpj) {
 		return service.acharHotelCnpj(cnpj).map(mapeandoCnpj -> ResponseEntity.ok().body(mapeandoCnpj))
@@ -111,15 +91,7 @@ public class HotelariaController {
 
 	}
 
-	/**
-	 * 
-	 * @apiNote Exercicio 6
-	 * @since 21/06/2024 21:07:21
-	 * @author Mauro Degaspari
-	 * @return Crie outro metodo personalizado. Podendo ser uma nova
-	 *         'buscaPorAlgumaCoisa', podendo ser um novo 'deletarPorAlgumaCoisa',
-	 *         'updatePorAlgumaCoisa'. Faça de acordo como foi feito em aula.
-	 */
+	
 	@GetMapping(value = "/buscarLocalidade/{local}")
 	public ResponseEntity<List<HotelariaDto>> acharPorLocalidade(@PathVariable(value = "local") String local) {
 		return service.acharHotelLocal(local).map(mapeandoLocaidade -> ResponseEntity.ok().body(mapeandoLocaidade))
