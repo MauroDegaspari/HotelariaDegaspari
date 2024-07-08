@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException.Conflict;
 
 import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.domain.conversoes.HotelariaConversao;
+import br.com.HotelariaDegaspari.infrastructure.exceptions.BadRequestException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.ConflitoException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.ImprocessavelException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.NegocioException;
@@ -33,18 +33,6 @@ public class HotelariaService {
 		this.conversao = conversao;
 	}
 
-	/**
-	 * 
-	 * @apiNote Exercicio 7
-	 * @since 25/06/2024 22:27:21
-	 * @author Mauro Degaspari
-	 * @return Faça o metodo update e o de listagem fazendo com que seja retornado
-	 *         para o usuario como DTO. Requisitos: Criar o metodo de listar e
-	 *         update tendo como retorno DTO; Tendo no controller apenas DTO;
-	 * 
-	 *         use todo o seu conhecimento (Vá além)
-	 * 
-	 */
 	@Transactional(readOnly = true)
 	public List<HotelariaDto> listarTodosHoteisServices() {
 
@@ -53,13 +41,12 @@ public class HotelariaService {
 		try {
 
 			if (hotelModel.isEmpty())
-				JOptionPane.showMessageDialog(null, "Não existe Hotel CADASTRADO. ");
+				throw new ImprocessavelException("Não Existe Hotel para Listar");
 
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			System.out.println("Erro: " + e.getMessage());
-
+		} catch (ImprocessavelException imp) {			
+			throw ImprocessavelException(imp.getMessage());
+		} catch (NegocioException e){
+			throw new NegocioException(e.getMessage());
 		}
 
 		return conversao.listaParaDto(hotelModel);
@@ -71,21 +58,14 @@ public class HotelariaService {
 
 		HotelariaModel model = conversao.paraModel(hotelDto);
 
-//		try {
-
-			if (this.validarHotel(hotelDto) == false) {
-				return null;
-			}
-
+		try {
+			
 			HotelariaModel novoHotel = repository.save(model);
 			return conversao.paraDto(novoHotel);
-
-//		 catch (NegocioException e) {
-//			e.printStackTrace();
-//			throw new ConflitoException("Erro: TEste");
-//		}
-//
-//		 return null;
+			
+		} catch (BadRequestException e) {
+			throw new BadRequestException("erro interno");
+		}
 	}
 
 	@Transactional(readOnly = true)
@@ -127,11 +107,9 @@ public class HotelariaService {
 		}
 
 		HotelariaDto cnpjDto = new HotelariaDto();
-		BeanUtils.copyProperties(cnpjHotel.get(), cnpjDto);// .get() - Se um valor estiver presente neste Opcional,
-															// retorna o valor, caso contrário lança
-															// NoSuchElementException.
+		BeanUtils.copyProperties(cnpjHotel.get(), cnpjDto);
 
-		return Optional.of(cnpjDto);// Optional.of - Retorna um Opcional com o valor presente não nulo especificado.
+		return Optional.of(cnpjDto);
 
 	}
 
@@ -150,19 +128,27 @@ public class HotelariaService {
 					throw new ImprocessavelException("Hotel Não encontrado por LOCALIZAÇÃO");
 				} else {
 					HotelariaDto dto = new HotelariaDto();
-					BeanUtils.copyProperties(LocalNovo.get(), dto); // .get() - Se um valor estiver presente
-																					   // neste
-																					   // Opcional, retorna o valor, caso
-																					   // contrário
-					
-					
+					BeanUtils.copyProperties(LocalNovo.get(), dto); // .get() -
+																	// Se um
+																	// valor
+																	// estiver
+																	// presente
+																	// neste
+																	// Opcional,
+																	// retorna o
+																	// valor,
+																	// caso
+																	// contrário
+
 					dtoLocalidade.add(dto);
 
 				}
 
 			}
-			
-			return Optional.of(dtoLocalidade); // Optional.of - Retorna um Opcional com o valor presente não nulo
+
+			return Optional.of(dtoLocalidade); // Optional.of - Retorna um
+												// Opcional com o valor presente
+												// não nulo
 												// especificado.
 
 		} catch (Exception e) {
@@ -172,7 +158,7 @@ public class HotelariaService {
 		}
 		return null;
 	}
-	
+
 	@Modifying
 	@Transactional
 	public Optional<HotelariaDto> deletarService(int id) {
@@ -195,29 +181,33 @@ public class HotelariaService {
 		return Optional.of(dtoDelete);
 	}
 
-	public boolean validarHotel(HotelariaDto hotel) throws ConflitoException {
+	public boolean validarHotel(HotelariaDto hotel) {
 
 		List<HotelariaModel> todosHoteis = repository.findAll();
+		try {
 
-		for (HotelariaModel hotelariaModel : todosHoteis) {
-			if (hotelariaModel.getCnpj().equals(hotel.getCnpj())) {
-				throw new ConflitoException("Hotel com CNPJ " + hotelariaModel.getCnpj() + " já existe!");
+			for (HotelariaModel hotelariaModel : todosHoteis) {
+				if (hotelariaModel.getCnpj().equals(hotel.getCnpj())) {
+					throw new ConflitoException("Hotel com CNPJ " + hotelariaModel.getCnpj() + " já existe!");
+				}
 			}
+
+			if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
+				throw new ConflitoException("campo vazio, nome ou cnpj");
+
+			if (hotel.getCnpj().length() != 14) {
+				throw new ConflitoException("Erro: CNPJ deve conter 14 numeros");
+			}
+
+			if (hotel.getCapacidade() < 0) {
+
+				throw new ConflitoException("Capacidade tem que ser maior que 0");
+
+			}
+
+		} catch (Exception e) {
+			throw new ConflitoException("Erro interno.", e);
 		}
-
-		if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
-			throw new ConflitoException("campo vazio, nome ou cnpj");
-
-		if (hotel.getCnpj().length() != 14) {
-			throw new ConflitoException("Erro: CNPJ deve conter 14 numeros");
-		}
-
-		if (hotel.getCapacidade() < 0) {
-
-			throw new ConflitoException("Capacidade tem que ser maior que 0");
-
-		}
-
 		return true;
 	}
 
@@ -238,7 +228,7 @@ public class HotelariaService {
 		} catch (ImprocessavelException e) {
 			e.printStackTrace();
 			return null;
-		} catch (NegocioException e){
+		} catch (NegocioException e) {
 			throw new NegocioException("Erro ao vaidar edição de hotel");
 		}
 		return conversao.paraDto(hotelNovo);

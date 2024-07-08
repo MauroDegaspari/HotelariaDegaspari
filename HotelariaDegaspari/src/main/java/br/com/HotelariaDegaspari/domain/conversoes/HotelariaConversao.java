@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 import br.com.HotelariaDegaspari.api.dto.HotelariaDto;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 
-@Component //será automaticamente detectada pelo Spring e registrada como um bean no contêiner.
+@Component
 public class HotelariaConversao {
-	
+
 	public HotelariaDto paraDto(HotelariaModel model) {
 		HotelariaDto dto = new HotelariaDto();
 		BeanUtils.copyProperties(model, dto);
 		return dto;
 	}
-	
+
 	public HotelariaModel paraModel(HotelariaDto dto) {
 		HotelariaModel model = new HotelariaModel();
 		BeanUtils.copyProperties(dto, model);
@@ -37,7 +37,7 @@ public class HotelariaConversao {
 
 		// return listaModel.stream().map(model ->
 		// paraDto(model)).collect(Collectors.toList());
-		// 	
+		//
 	}
 
 }

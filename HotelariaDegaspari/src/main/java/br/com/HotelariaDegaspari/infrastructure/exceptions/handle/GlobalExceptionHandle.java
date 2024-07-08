@@ -9,9 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import br.com.HotelariaDegaspari.infrastructure.exceptions.NegocioException;
+import br.com.HotelariaDegaspari.infrastructure.exceptions.BadRequestException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.ConflitoException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.ImprocessavelException;
+import br.com.HotelariaDegaspari.infrastructure.exceptions.NegocioException;
 
 @ControllerAdvice
 public class GlobalExceptionHandle {
@@ -29,6 +30,11 @@ public class GlobalExceptionHandle {
 	@ExceptionHandler(ImprocessavelException.class)
 	public ResponseEntity<ErrosResponse> handleResponseEntity(ImprocessavelException up, HttpServletRequest request){		
 		return response(up.getMessage(), request, HttpStatus.UNPROCESSABLE_ENTITY, LocalDateTime.now());		
+	}
+	
+	@ExceptionHandler(BadRequestException.class)
+	public ResponseEntity<ErrosResponse> handleResponseEntity(BadRequestException up, HttpServletRequest request){		
+		return response(up.getMessage(), request, HttpStatus.BAD_REQUEST, LocalDateTime.now());		
 	}
 	
 	private ResponseEntity<ErrosResponse> response(final String message, final HttpServletRequest request, final  HttpStatus status, LocalDateTime data ){

@@ -7,29 +7,28 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 //@Builder // faz com que toda a classe seja 'buildada'
 @Entity
 @Table(name = "TB_HOTELARIA")
 public class HotelariaModel {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private int id;
-	
+
 	@Column(name = "nome")
 	private String nome;
-	
+
 	@Column(name = "local")
 	private String local;
-	private int capacidade;
-	
+	private Integer capacidade;
+
 	@Column(name = "CNPJ")
 	private String cnpj;
-	
+
 	public HotelariaModel() {
-		
+
 	}
 
 	public int getId() {
@@ -56,11 +55,11 @@ public class HotelariaModel {
 		this.local = local;
 	}
 
-	public int getCapacidade() {
+	public Integer getCapacidade() {
 		return capacidade;
 	}
 
-	public void setCapacidade(int capacidade) {
+	public void setCapacidade(Integer capacidade) {
 		this.capacidade = capacidade;
 	}
 
@@ -71,9 +70,5 @@ public class HotelariaModel {
 	public void setCnpj(String cnpj) {
 		this.cnpj = cnpj;
 	}
-	
-	
-
-	
 
 }
