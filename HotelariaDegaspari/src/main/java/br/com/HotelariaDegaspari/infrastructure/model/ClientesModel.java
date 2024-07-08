@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,7 +17,7 @@ public class ClientesModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id_cliente")
+	@Column(name = "id_cliente", nullable = false)
 	private UUID id;
 	
 	private String nome;
@@ -23,6 +25,18 @@ public class ClientesModel {
 	private int cpf;
 	
 	private int fone;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_hotel")
+	private HotelariaModel hotel;
+
+	public HotelariaModel getHotel() {
+		return hotel;
+	}
+
+	public void setHotel(HotelariaModel hotel) {
+		this.hotel = hotel;
+	}
 
 	public UUID getId() {
 		return id;

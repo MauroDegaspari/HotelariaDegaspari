@@ -2,6 +2,8 @@ package br.com.HotelariaDegaspari.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +21,19 @@ import br.com.HotelariaDegaspari.domain.service.HotelariaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-//@RequiredArgsConstructor
 @RequestMapping("/app")
-@Tag(name = "TB_HOTELARIA")
 public class HotelariaController {
-
-	// private final HotelariaRepository repository;
 
 	@Autowired
 	private HotelariaService service;
 
+	@Operation(summary = "Salvar novos Hoteis", method = "POST")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Hotel salvo com Sucesso"),
+			@ApiResponse(responseCode = "500", description = "Erro ao salvar Hotel"),
+			@ApiResponse(responseCode = "422", description = "Erro ???"),
+			@ApiResponse(responseCode = "400", description = "Erro 400")})
 	@GetMapping(value = "/listarTodos")
 	public ResponseEntity<List<HotelariaDto>> ListarTodos() {
 
@@ -46,13 +48,14 @@ public class HotelariaController {
 		return service.acharIdService(id).map(mapeando -> ResponseEntity.ok().body(mapeando))
 				.orElse(ResponseEntity.notFound().build());
 	}
-	
+
 	@Operation(summary = "Salvar novos Hoteis", method = "POST")
-	@ApiResponses(value = { @ApiResponse(responseCode ="200", description ="Hotel salvo com Sucesso"),
-						    @ApiResponse(responseCode ="500", description ="Erro ao salvar Hotel"),
-						    @ApiResponse(responseCode ="409", description ="Erro ???") })
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Hotel salvo com Sucesso"),
+			@ApiResponse(responseCode = "500", description = "Erro ao salvar Hotel"),
+			@ApiResponse(responseCode = "409", description = "Erro ???"),
+			@ApiResponse(responseCode = "400", description = "Erro 400")})
 	@PostMapping(value = "/salvar")
-	public ResponseEntity<String> salvar(@RequestBody HotelariaDto hotelaria) {
+	public ResponseEntity<String> salvar(@Valid @RequestBody HotelariaDto hotelaria) {
 
 		HotelariaDto hotel = service.salvarServices(hotelaria);
 
@@ -61,7 +64,6 @@ public class HotelariaController {
 
 	}
 
-	
 	@PutMapping(value = "/editar/{id}")
 	public ResponseEntity<String> editar(@PathVariable(value = "id") int id, @RequestBody HotelariaDto hotel) {
 
@@ -75,15 +77,12 @@ public class HotelariaController {
 	}
 
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<?> deletar(@PathVariable int id) {
-		return service.acharIdService(id).map(mapeandoHotel -> {
-			service.deletarService(id);
-			return ResponseEntity.ok().body("Hotel " + mapeandoHotel.getNome() + " deletado com SUCESSO ");
-		}).orElse(ResponseEntity.notFound().build());
+	public ResponseEntity<String> deletar(@PathVariable int id) {
+		return service.deletarService(id) == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao Editar:")
+				: ResponseEntity.status(HttpStatus.OK).body("Hotel Deletado.");
 
 	}
 
-	
 	@GetMapping(value = "/buscarCnpj/{cnpj}")
 	public ResponseEntity<HotelariaDto> acharPeloCnpj(@PathVariable(value = "cnpj") String cnpj) {
 		return service.acharHotelCnpj(cnpj).map(mapeandoCnpj -> ResponseEntity.ok().body(mapeandoCnpj))
@@ -91,7 +90,6 @@ public class HotelariaController {
 
 	}
 
-	
 	@GetMapping(value = "/buscarLocalidade/{local}")
 	public ResponseEntity<List<HotelariaDto>> acharPorLocalidade(@PathVariable(value = "local") String local) {
 		return service.acharHotelLocal(local).map(mapeandoLocaidade -> ResponseEntity.ok().body(mapeandoLocaidade))
