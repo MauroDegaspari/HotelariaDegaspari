@@ -44,7 +44,7 @@ public class HotelariaService {
 				throw new ImprocessavelException("Não Existe Hotel para Listar");
 
 		} catch (ImprocessavelException imp) {			
-			throw ImprocessavelException(imp.getMessage());
+			throw new ImprocessavelException(imp.getMessage());
 		} catch (NegocioException e){
 			throw new NegocioException(e.getMessage());
 		}
@@ -60,11 +60,17 @@ public class HotelariaService {
 
 		try {
 			
+			if (validarHotel(hotelDto) == false) {
+				throw new ConflitoException("erro.");
+			}
+			
 			HotelariaModel novoHotel = repository.save(model);
 			return conversao.paraDto(novoHotel);
 			
 		} catch (BadRequestException e) {
-			throw new BadRequestException("erro interno");
+			throw new BadRequestException(e.getMessage());
+		} catch (NegocioException e) {
+			throw new NegocioException(e.getMessage());
 		}
 	}
 
@@ -188,25 +194,26 @@ public class HotelariaService {
 
 			for (HotelariaModel hotelariaModel : todosHoteis) {
 				if (hotelariaModel.getCnpj().equals(hotel.getCnpj())) {
-					throw new ConflitoException("Hotel com CNPJ " + hotelariaModel.getCnpj() + " já existe!");
+					throw new BadRequestException("Hotel com CNPJ " + hotelariaModel.getCnpj() + " já existe!");
 				}
 			}
 
 			if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
-				throw new ConflitoException("campo vazio, nome ou cnpj");
+				throw new BadRequestException("campo vazio, nome ou cnpj");
 
 			if (hotel.getCnpj().length() != 14) {
-				throw new ConflitoException("Erro: CNPJ deve conter 14 numeros");
+				throw new BadRequestException("Erro: CNPJ deve conter 14 numeros");
 			}
 
 			if (hotel.getCapacidade() < 0) {
 
-				throw new ConflitoException("Capacidade tem que ser maior que 0");
+				throw new BadRequestException("Capacidade tem que ser maior que 0");
 
 			}
 
 		} catch (Exception e) {
-			throw new ConflitoException("Erro interno.", e);
+			e.printStackTrace();
+			throw new ConflitoException(e.getMessage());
 		}
 		return true;
 	}
