@@ -31,20 +31,6 @@ public class HotelariaController {
 
 	@Operation(summary = "Salvar novos Hoteis", method = "POST")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Hotel salvo com Sucesso"),
-			@ApiResponse(responseCode = "500", description = "Erro ao salvar Hotel"),
-			@ApiResponse(responseCode = "422", description = "Erro ???"),
-			@ApiResponse(responseCode = "400", description = "Erro 400") })
-	@GetMapping(value = "/listarTodos")
-	public ResponseEntity<List<HotelariaDto>> ListarTodos() {
-
-		List<HotelariaDto> hotel = service.listarTodosHoteisServices();
-		return hotel.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
-				: new ResponseEntity<List<HotelariaDto>>(hotel, HttpStatus.OK);
-
-	}
-
-	@Operation(summary = "Salvar novos Hoteis", method = "POST")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Hotel salvo com Sucesso"),
 			@ApiResponse(responseCode = "500", description = "Erro Internal Server Error."),
 			@ApiResponse(responseCode = "409", description = "Erro de conflito "),
 			@ApiResponse(responseCode = "400", description = "Erro BAD REQUEST") })
@@ -62,7 +48,8 @@ public class HotelariaController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Hotel salvo com Sucesso"),
 			@ApiResponse(responseCode = "500", description = "Erro Internal Server Error."),
 			@ApiResponse(responseCode = "409", description = "Erro de conflito "),
-			@ApiResponse(responseCode = "400", description = "Erro BAD REQUEST") })
+			@ApiResponse(responseCode = "400", description = "Erro BAD REQUEST"),
+			@ApiResponse(responseCode = "404", description = "Erro NOTFOUND")})
 	@PutMapping(value = "/editar/{id}")
 	public ResponseEntity<String> editar(@PathVariable(value = "id") int id, @RequestBody HotelariaDto hotel) {
 
@@ -97,6 +84,20 @@ public class HotelariaController {
 		return service.acharIdService(id).map(mapeando -> ResponseEntity.ok().body(mapeando))
 				.orElse(ResponseEntity.notFound().build());
 	}
+	
+	@Operation(summary = "Lista todos os Hoteis", method = "GET")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Hotel salvo com Sucesso"),
+			@ApiResponse(responseCode = "500", description = "Erro ao salvar Hotel"),
+			@ApiResponse(responseCode = "422", description = "Erro UNPROCESSABLE_ENTITY - sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes"),
+			@ApiResponse(responseCode = "400", description = "Erro 400") })
+	@GetMapping(value = "/listarTodos")
+	public ResponseEntity<List<HotelariaDto>> ListarTodos() {
+
+		List<HotelariaDto> hotel = service.listarTodosHoteisServices();
+		return hotel.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
+				: new ResponseEntity<List<HotelariaDto>>(hotel, HttpStatus.OK);
+
+	}
 
 	@Operation(summary = "Pesquisar por CNPJ", method = "GET")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Hotel salvo com Sucesso"),
@@ -114,6 +115,7 @@ public class HotelariaController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Hotel salvo com Sucesso"),
 			@ApiResponse(responseCode = "500", description = "Erro Internal Server Error."),
 			@ApiResponse(responseCode = "409", description = "Erro de conflito "),
+			@ApiResponse(responseCode = "422", description = "Erro UNPROCESSABLE_ENTITY - sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes"),
 			@ApiResponse(responseCode = "400", description = "Erro BAD REQUEST") })
 	@GetMapping(value = "/buscarLocalidade/{local}")
 	public ResponseEntity<List<HotelariaDto>> acharPorLocalidade(@PathVariable(value = "local") String local) {

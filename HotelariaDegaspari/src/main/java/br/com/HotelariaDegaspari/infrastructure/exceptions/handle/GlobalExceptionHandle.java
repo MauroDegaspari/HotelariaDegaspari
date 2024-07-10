@@ -13,6 +13,7 @@ import br.com.HotelariaDegaspari.infrastructure.exceptions.BadRequestException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.ConflitoException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.ImprocessavelException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.NegocioException;
+import br.com.HotelariaDegaspari.infrastructure.exceptions.NotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandle {
@@ -36,6 +37,12 @@ public class GlobalExceptionHandle {
 	public ResponseEntity<ErrosResponse> handleResponseEntity(BadRequestException up, HttpServletRequest request){		
 		return response(up.getMessage(), request, HttpStatus.BAD_REQUEST, LocalDateTime.now());		
 	}
+	
+	@ExceptionHandler(NotFoundException.class)
+	public ResponseEntity<ErrosResponse> handleResponseEntity(NotFoundException nf, HttpServletRequest request){		
+		return response(nf.getMessage(), request, HttpStatus.NOT_FOUND, LocalDateTime.now());		
+	}
+	
 	
 	private ResponseEntity<ErrosResponse> response(final String message, final HttpServletRequest request, final  HttpStatus status, LocalDateTime data ){
 		return  ResponseEntity.status(status).body(new ErrosResponse(message, data, status.value(), request.getRequestURI()));

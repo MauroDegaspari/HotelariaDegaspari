@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.JOptionPane;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,6 +16,7 @@ import br.com.HotelariaDegaspari.infrastructure.exceptions.BadRequestException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.ConflitoException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.ImprocessavelException;
 import br.com.HotelariaDegaspari.infrastructure.exceptions.NegocioException;
+import br.com.HotelariaDegaspari.infrastructure.exceptions.NotFoundException;
 import br.com.HotelariaDegaspari.infrastructure.model.HotelariaModel;
 import br.com.HotelariaDegaspari.infrastructure.repository.HotelariaRepository;
 
@@ -43,9 +42,9 @@ public class HotelariaService {
 			if (hotelModel.isEmpty())
 				throw new ImprocessavelException("Não Existe Hotel para Listar");
 
-		} catch (ImprocessavelException imp) {			
+		} catch (ImprocessavelException imp) {
 			throw new ImprocessavelException(imp.getMessage());
-		} catch (NegocioException e){
+		} catch (NegocioException e) {
 			throw new NegocioException(e.getMessage());
 		}
 
@@ -59,14 +58,14 @@ public class HotelariaService {
 		HotelariaModel model = conversao.paraModel(hotelDto);
 
 		try {
-			
+
 			if (validarHotel(hotelDto) == false) {
-				throw new ConflitoException("erro.");
+				throw new BadRequestException("erro.");
 			}
-			
+
 			HotelariaModel novoHotel = repository.save(model);
 			return conversao.paraDto(novoHotel);
-			
+
 		} catch (BadRequestException e) {
 			throw new BadRequestException(e.getMessage());
 		} catch (NegocioException e) {
@@ -82,12 +81,12 @@ public class HotelariaService {
 		try {
 
 			if (!hotelId.isPresent())
-				throw new ImprocessavelException("Hotel Não encontrado na base de dados");
+				throw new NegocioException("Hotel Não encontrado na base de dados");
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
-			System.out.println("Erro: " + e.getMessage());
+			throw new NegocioException(e.getMessage());
 		}
 
 		HotelariaDto cnpjAcharId = new HotelariaDto();
@@ -109,7 +108,7 @@ public class HotelariaService {
 		} catch (Exception e) {
 
 			e.printStackTrace();
-			System.out.println("Erro: " + e.getMessage());
+			throw new ImprocessavelException(e.getMessage());
 		}
 
 		HotelariaDto cnpjDto = new HotelariaDto();
@@ -127,12 +126,11 @@ public class HotelariaService {
 
 		try {
 
-			for (Optional<HotelariaModel> LocalNovo : localidadeHotel) {
+			if (localidadeHotel.isEmpty()) {
+				throw new ImprocessavelException("Nenhum Hotel encontrado pela pesquisa:");
+			} else {
+				for (Optional<HotelariaModel> LocalNovo : localidadeHotel) {
 
-				if (!LocalNovo.isPresent()) {
-
-					throw new ImprocessavelException("Hotel Não encontrado por LOCALIZAÇÃO");
-				} else {
 					HotelariaDto dto = new HotelariaDto();
 					BeanUtils.copyProperties(LocalNovo.get(), dto); // .get() -
 																	// Se um
@@ -157,31 +155,31 @@ public class HotelariaService {
 												// não nulo
 												// especificado.
 
-		} catch (Exception e) {
-
+		} catch (ImprocessavelException e) {
 			e.printStackTrace();
-			System.out.println("Erro: " + e.getMessage());
+			throw new ImprocessavelException(e.getMessage());
 		}
-		return null;
+
 	}
 
 	@Modifying
 	@Transactional
 	public Optional<HotelariaDto> deletarService(int id) {
 
-		Optional<HotelariaModel> deletarHotel = repository.findById(id);
+		HotelariaModel deletarHotel = conversao.paraModel(acharIdService(id).get());
 		HotelariaDto dtoDelete = new HotelariaDto();
 
 		try {
-			if (deletarHotel.isPresent()) {
+			if (!(deletarHotel == null)) {
 				BeanUtils.copyProperties(deletarHotel, dtoDelete);
-				repository.delete(deletarHotel.get());
+				repository.delete(deletarHotel);
 			} else {
-				return null;
+				throw new NotFoundException("Hotel não encontrado.");
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new NotFoundException(e.getMessage());
 		}
 
 		return Optional.of(dtoDelete);
@@ -194,27 +192,27 @@ public class HotelariaService {
 
 			for (HotelariaModel hotelariaModel : todosHoteis) {
 				if (hotelariaModel.getCnpj().equals(hotel.getCnpj())) {
-					throw new BadRequestException("Hotel com CNPJ " + hotelariaModel.getCnpj() + " já existe!");
+					throw new ConflitoException("Hotel com CNPJ " + hotelariaModel.getCnpj() + " já existe!");
 				}
 			}
 
 			if (hotel.getNome().isEmpty() || hotel.getCnpj().isEmpty())
-				throw new BadRequestException("campo vazio, nome ou cnpj");
+				throw new ConflitoException("campo vazio, nome ou cnpj");
 
 			if (hotel.getCnpj().length() != 14) {
-				throw new BadRequestException("Erro: CNPJ deve conter 14 numeros");
+				throw new ConflitoException("Erro: CNPJ deve conter 14 numeros");
 			}
 
 			if (hotel.getCapacidade() < 0) {
 
-				throw new BadRequestException("Capacidade tem que ser maior que 0");
+				throw new ConflitoException("Capacidade tem que ser maior que 0");
 
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ConflitoException(e.getMessage());
-		}
+		} 
 		return true;
 	}
 
@@ -227,14 +225,14 @@ public class HotelariaService {
 		try {
 
 			if (!hotelNovo.getCnpj().equals(hotel.getCnpj()))
-				throw new ImprocessavelException("CNPJ não pode ser alterado.");
+				throw new NotFoundException("CNPJ não pode ser alterado.");
 
-			BeanUtils.copyProperties(hotel, hotelNovo);
+			BeanUtils.copyProperties(hotel, hotelNovo, "id");
 			repository.save(hotelNovo);
 
-		} catch (ImprocessavelException e) {
+		} catch (NotFoundException e) {
 			e.printStackTrace();
-			return null;
+			throw new NotFoundException(e.getMessage());
 		} catch (NegocioException e) {
 			throw new NegocioException("Erro ao vaidar edição de hotel");
 		}
