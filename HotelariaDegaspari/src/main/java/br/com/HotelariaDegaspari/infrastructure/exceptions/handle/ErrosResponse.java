@@ -9,34 +9,48 @@ public class ErrosResponse {
 	private int status;
 	private String path;
 	
-	
 	public ErrosResponse(String message, LocalDateTime data, int status, String path) {
-		
+		this.message = message;
+		this.data = data;
+		this.status = status;
+		this.path = path;
 	}
-	public String getMessager() {
+
+	public String getMessage() {
 		return message;
 	}
-	public void setMessager(String message) {
+
+	public void setMessage(String message) {
 		this.message = message;
 	}
+
 	public LocalDateTime getData() {
 		return data;
 	}
+
 	public void setData(LocalDateTime data) {
 		this.data = data;
 	}
+
 	public int getStatus() {
 		return status;
 	}
+
 	public void setStatus(int status) {
 		this.status = status;
 	}
+
 	public String getPath() {
 		return path;
 	}
+
 	public void setPath(String path) {
 		this.path = path;
 	}
+	
+	
+	
+	
 	
 	
 
