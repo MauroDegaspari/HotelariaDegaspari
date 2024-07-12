@@ -11,9 +11,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name ="TB_CLIENTES")
-public class ClientesModel {
+public class ClienteModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,47 +39,6 @@ public class ClientesModel {
 	@JoinColumn(name = "id_hotel")
 	private HotelariaModel hotel;
 
-	public HotelariaModel getHotel() {
-		return hotel;
-	}
-
-	public void setHotel(HotelariaModel hotel) {
-		this.hotel = hotel;
-	}
-
-	public UUID getId() {
-		return id;
-	}
-
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public int getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(int cpf) {
-		this.cpf = cpf;
-	}
-
-	public int getFone() {
-		return fone;
-	}
-
-	public void setFone(int fone) {
-		this.fone = fone;
-	}
-	
-	
 	
 }
 

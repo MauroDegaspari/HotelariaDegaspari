@@ -7,11 +7,16 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class HotelariaDto {
-
-	public HotelariaDto() {
-
-	}
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private int id;
@@ -27,44 +32,6 @@ public class HotelariaDto {
 
 	private String cnpj;
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getLocal() {
-		return local;
-	}
-
-	public void setLocal(String local) {
-		this.local = local;
-	}
-
-	public Integer getCapacidade() {
-		return capacidade;
-	}
-
-	public void setCapacidade(Integer capacidade) {
-		this.capacidade = capacidade;
-	}
-
-	public String getCnpj() {
-		return cnpj;
-	}
-
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
-	}
+	
 
 }

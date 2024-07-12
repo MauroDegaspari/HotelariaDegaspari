@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import br.com.HotelariaDegaspari.infrastructure.model.ClientesModel;
+import br.com.HotelariaDegaspari.infrastructure.model.ClienteModel;
 
-public interface ClientesRepository  extends JpaRepository<ClientesModel, UUID>{
+public interface ClienteRepository  extends JpaRepository<ClienteModel, UUID>{
 
 }

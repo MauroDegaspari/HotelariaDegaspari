@@ -22,7 +22,7 @@ public class HotelariaModel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+	@Column(name = "ID_HOTEL", nullable = false)
 	private int id;
 
 	@Column(name = "nome")
